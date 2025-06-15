@@ -7,7 +7,8 @@
     "start":   { "location": "Buk",            "time": "8:00" },
     "finish":  { "location": "Łęki Wielkie, Wilanowo",   "time": "17:30" },
     "mass":    { "location": "Buk",            "time": "7:00" },
-    "meal":    { "location": "Granowo",        "time": "12:30" }
+    "meal":    { "location": "Granowo",        "time": "12:30" },
+    "image": "day1.jpg"
   },
   {
     "day": 2,
@@ -17,7 +18,8 @@
     "start":   { "location": "Łęki Wielkie, Wilanowo",            "time": "7:00" },
     "finish":  { "location": "Krzywiń ",         "time": "19:30" },
     "mass":    { "location": "Kościan – Fara ",         "time": "12:00" },
-    "meal":    { "location": "Racot",            "time": "14:00" }
+    "meal":    { "location": "Racot",            "time": "14:00" },
+    "image": "day2.jpg"
   },
 
   {
@@ -28,7 +30,8 @@
     "start":   { "location": "Krzywiń",            "time": "8:00" },
     "finish":  { "location": "Pudliszki",   "time": "17:00" },
     "mass":    { "location": "Krzywiń",            "time": "7:00" },
-    "meal":    { "location": "Łęka Wielka",        "time": "13:00" }
+    "meal":    { "location": "Łęka Wielka",        "time": "13:00" },
+    "image": "day3.jpg"
   },
 
   {
@@ -39,7 +42,8 @@
     "start":   { "location": "Pudliszki",            "time": "8:00" },
     "finish":  { "location": "Zduny",   "time": "19:00" },
     "mass":    { "location": "Pudliszki",            "time": "7:15" },
-    "meal":    { "location": "Magdalenki, czeluścinek",        "time": "12:00" }
+    "meal":    { "location": "Magdalenki, czeluścinek",        "time": "12:00" },
+    "image": "day4.jpg"
   },
   {
     "day": 5,
@@ -49,7 +53,8 @@
     "start":   { "location": "Zduny",            "time": "10:00" },
     "finish":  { "location": "Garki",   "time": "18:30" },
     "mass":    { "location": "Zduny",            "time": "9:00" },
-    "meal":    { "location": "Remiza Zduny",        "time": "-" }
+    "meal":    { "location": "Remiza Zduny",        "time": "-" },
+    "image": "day5.jpg"
   },
   {
     "day": 6,
@@ -59,7 +64,8 @@
     "start":   { "location": "Garki",            "time": "7:30" },
     "finish":  { "location": "Kobyla Góra",   "time": "19:00" },
     "mass":    { "location": "Czarnylas",            "time": "11:45" },
-    "meal":    { "location": "Remiza Szklarka Przygodzicka",        "time": "-" }
+    "meal":    { "location": "Remiza Szklarka Przygodzicka",        "time": "-" },
+    "image": "day6.jpg"
   },
   {
     "day": 7,
@@ -69,7 +75,8 @@
     "start":   { "location": "Kobyla Góra",            "time": "8:00" },
     "finish":  { "location": "Słupia pod Kępnem",   "time": "17:00" },
     "mass":    { "location": "Parzynów",            "time": "10:00" },
-    "meal":    { "location": "Boisko Rzetnia",        "time": " " }
+    "meal":    { "location": "Boisko Rzetnia",        "time": " " },
+    "image": "day7.jpg"
   },
   {
     "day": 8,
@@ -79,7 +86,8 @@
     "start":   { "location": "Słupia pod Kępnem",            "time": "7:30" },
     "finish":  { "location": "Skomlin",   "time": "18:30" },
     "mass":    { "location": "Opatów",            "time": "9:45" },
-    "meal":    { "location": "OSiR Bolesławiec",        "time": " " }
+    "meal":    { "location": "OSiR Bolesławiec",        "time": " " },
+    "image": "day8.jpg"
   },
   {
     "day": 9,
@@ -89,7 +97,8 @@
     "start":   { "location": "Skomlin",            "time": "9:00" },
     "finish":  { "location": "Zajączki Drugie",   "time": "19:30" },
     "mass":    { "location": "Skomlin",            "time": "8:00" },
-    "meal":    { "location": "Remiza Gana",        "time": "" }
+    "meal":    { "location": "Remiza Gana",        "time": "" },
+    "image": "day9.jpg"
   },
   {
     "day": 10,
@@ -99,7 +108,8 @@
     "start":   { "location": "Zajączki Drugie",            "time": "7:00" },
     "finish":  { "location": "Grodzisko, Wręczyca",   "time": "19:00" },
     "mass":    { "location": "Kłobuck – Stawy",            "time": "" },
-    "meal":    { "location": "parking Waleńczów",        "time": "" }
+    "meal":    { "location": "parking Waleńczów",        "time": "" },
+    "image": "day10.jpg"
   },
   {
     "day": 11,
@@ -109,6 +119,7 @@
     "start":   { "location": "Grodzisko, Wręczyca",            "time": "7:00" },
     "finish":  { "location": "Powitanie grup na Jasnej Górze",   "time": "12:15" },
     "mass":    { "location": "Jasna Góra – Wały",            "time": "16:00" },
-    "meal":    { "location": "nie ma :(",        "time": "" }
+    "meal":    { "location": "nie ma :(",        "time": "" },
+    "image": "day11.jpg"
   }
 ]

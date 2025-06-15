@@ -1,60 +1,62 @@
 // App.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as SystemUI from 'expo-system-ui'; // <– tu nowy import
 
-import HomeScreen            from './screens/HomeScreen';
-import SpiewnikScreen        from './screens/SpiewnikScreen';
-import DailyPlanScreen       from './screens/DailyPlanScreen';
+// ... importy ekranów (tak jak wcześniej)
+import HomeScreen from './screens/HomeScreen';
+import SpiewnikScreen from './screens/SpiewnikScreen';
+import DailyPlanScreen from './screens/DailyPlanScreen';
 import DailyPlanDetailScreen from './screens/DailyPlanDetailScreen';
 import ImportantPhonesScreen from './screens/ImportantPhonesScreen';
-import InformatorScreen      from './screens/InformatorScreen';
-import AutorScreen           from './screens/AutorScreen';          // ← upewnij się, że tu jest
-import ZapisyScreen          from './screens/ZapisyScreen';
+import InformatorScreen from './screens/InformatorScreen';
+import AutorScreen from './screens/AutorScreen';
+import ZapisyScreen from './screens/ZapisyScreen';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    // Status bar – u góry
+    StatusBar.setBackgroundColor('#333333');
+    StatusBar.setBarStyle('light-content');
+
+    // Navigation bar – pasek na dole Androida
+    SystemUI.setBackgroundColorAsync('#333333'); // <– to załatwia sprawę!
+  }, []);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Menu">
-        <Stack.Screen
-          name="Menu"
-          component={HomeScreen}
-          options={{ title: 'Grupa Buk' }}
-        />
-        <Stack.Screen
-          name="Śpiewnik"
-          component={SpiewnikScreen}
-        />
-        <Stack.Screen
-          name="DailyPlan"
-          component={DailyPlanScreen}
-          options={{ title: 'Plan dnia' }}
-        />
+      <Stack.Navigator
+        initialRouteName="Menu"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#333333',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          contentStyle: {
+            backgroundColor: '#556B2F',
+          },
+        }}
+      >
+        <Stack.Screen name="Menu" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Śpiewnik" component={SpiewnikScreen} />
+        <Stack.Screen name="DailyPlan" component={DailyPlanScreen} options={{ title: 'Plan dnia' }} />
         <Stack.Screen
           name="DailyPlanDetail"
           component={DailyPlanDetailScreen}
-          options={({ route }) => ({ title: `Day ${route.params.day}` })}
+          options={({ route }) => ({ title: `Dzień ${route.params.day}` })}
         />
-        <Stack.Screen
-          name="ImportantPhones"
-          component={ImportantPhonesScreen}
-          options={{ title: 'Ważne telefony' }}
-        />
-        <Stack.Screen
-          name="Informator"
-          component={InformatorScreen}
-        />
-        <Stack.Screen
-          name="Autor"                               // ← dokładnie ta nazwa
-          component={AutorScreen}
-          options={{ title: 'Autor' }}
-        />
-        <Stack.Screen
-          name="Zapisy"
-          component={ZapisyScreen}
-        />
+        <Stack.Screen name="ImportantPhones" component={ImportantPhonesScreen} options={{ title: 'Ważne telefony' }} />
+        <Stack.Screen name="Informator" component={InformatorScreen} />
+        <Stack.Screen name="Autor" component={AutorScreen} options={{ title: 'Autor' }} />
+        <Stack.Screen name="Zapisy" component={ZapisyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
