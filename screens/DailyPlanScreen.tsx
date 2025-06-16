@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Mapowanie dni na nazwy dni tygodnia
 const weekdayNames: Record<number, string> = {
@@ -43,6 +44,7 @@ const days = Array.from({ length: 11 }, (_, i) => i + 1);
 
 export default function DailyPlanScreen() {
   const navigation = useNavigation<DailyPlanNavProp>();
+  const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
 
@@ -86,7 +88,8 @@ export default function DailyPlanScreen() {
         data={days}
         keyExtractor={(item) => item.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 16 }]}
+        ListFooterComponent={() => <View style={{ height: insets.bottom + 50 }} />}
       />
     </View>
   );
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   leftStrip: {
-    width: '25%',            // zwiększona szerokość do 25%
+    width: '30%',
     backgroundColor: '#F0E68C',
     justifyContent: 'center',
     alignItems: 'center',
@@ -135,8 +138,7 @@ const styles = StyleSheet.create({
   },
   rightText: {
     fontSize: 18,
-    fontWeight: 'bold',      // pogrubione nazwy dni tygodnia
+    fontWeight: 'bold',
     color: '#333',
   },
 });
-

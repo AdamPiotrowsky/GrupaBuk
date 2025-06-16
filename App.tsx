@@ -1,11 +1,10 @@
 // App.tsx
 import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
+import * as SystemUI from 'expo-system-ui';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import * as SystemUI from 'expo-system-ui'; // <– tu nowy import
 
-// ... importy ekranów (tak jak wcześniej)
 import HomeScreen from './screens/HomeScreen';
 import SpiewnikScreen from './screens/SpiewnikScreen';
 import DailyPlanScreen from './screens/DailyPlanScreen';
@@ -14,7 +13,7 @@ import ImportantPhonesScreen from './screens/ImportantPhonesScreen';
 import InformatorScreen from './screens/InformatorScreen';
 import AutorScreen from './screens/AutorScreen';
 import ZapisyScreen from './screens/ZapisyScreen';
-
+import SpiewnikDetailScreen from './screens/SpiewnikDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +24,7 @@ export default function App() {
     StatusBar.setBarStyle('light-content');
 
     // Navigation bar – pasek na dole Androida
-    SystemUI.setBackgroundColorAsync('#333333'); // <– to załatwia sprawę!
+    SystemUI.setBackgroundColorAsync('#333333');
   }, []);
 
   return (
@@ -33,16 +32,10 @@ export default function App() {
       <Stack.Navigator
         initialRouteName="Menu"
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#333333',
-          },
+          headerStyle: { backgroundColor: '#333333' },
           headerTintColor: '#ffffff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          contentStyle: {
-            backgroundColor: '#556B2F',
-          },
+          headerTitleStyle: { fontWeight: 'bold' },
+          contentStyle: { backgroundColor: '#556B2F' },
         }}
       >
         <Stack.Screen name="Menu" component={HomeScreen} options={{ headerShown: false }} />
@@ -53,7 +46,17 @@ export default function App() {
           component={DailyPlanDetailScreen}
           options={({ route }) => ({ title: `Dzień ${route.params.day}` })}
         />
-        <Stack.Screen name="ImportantPhones" component={ImportantPhonesScreen} options={{ title: 'Ważne telefony' }} />
+        <Stack.Screen
+          name="ImportantPhones"
+          component={ImportantPhonesScreen}
+          options={{ title: 'Ważne telefony' }}
+        />
+        <Stack.Screen
+          name="SpiewnikDetail"
+          component={SpiewnikDetailScreen}
+          options={{ title: 'Pieśń' }}
+        />
+
         <Stack.Screen name="Informator" component={InformatorScreen} />
         <Stack.Screen name="Autor" component={AutorScreen} options={{ title: 'Autor' }} />
         <Stack.Screen name="Zapisy" component={ZapisyScreen} />

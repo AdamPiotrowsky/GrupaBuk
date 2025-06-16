@@ -53,7 +53,7 @@
     "start":   { "location": "Zduny",            "time": "10:00" },
     "finish":  { "location": "Garki",   "time": "18:30" },
     "mass":    { "location": "Zduny",            "time": "9:00" },
-    "meal":    { "location": "Remiza Zduny",        "time": "-" },
+    "meal":    { "location": "Remiza Zduny",        "time": "" },
     "image": "day5.jpg"
   },
   {
@@ -64,7 +64,7 @@
     "start":   { "location": "Garki",            "time": "7:30" },
     "finish":  { "location": "Kobyla Góra",   "time": "19:00" },
     "mass":    { "location": "Czarnylas",            "time": "11:45" },
-    "meal":    { "location": "Remiza Szklarka Przygodzicka",        "time": "-" },
+    "meal":    { "location": "Remiza Szklarka Przygodzicka",        "time": "" },
     "image": "day6.jpg"
   },
   {
