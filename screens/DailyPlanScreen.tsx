@@ -15,17 +15,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Mapowanie dni na nazwy dni tygodnia
 const weekdayNames: Record<number, string> = {
-  1: 'sobota',
-  2: 'niedziela',
-  3: 'poniedziałek',
-  4: 'wtorek',
-  5: 'środa',
-  6: 'czwartek',
-  7: 'piątek',
-  8: 'sobota',
-  9: 'niedziela',
-  10: 'poniedziałek',
-  11: 'wtorek',
+  1: 'sobota',  2: 'niedziela', 3: 'poniedziałek', 4: 'wtorek',
+  5: 'środa',   6: 'czwartek', 7: 'piątek',     8: 'sobota',
+  9: 'niedziela',10: 'poniedziałek',11: 'wtorek',
 };
 
 type RootStackParamList = {
@@ -45,10 +37,9 @@ const days = Array.from({ length: 11 }, (_, i) => i + 1);
 export default function DailyPlanScreen() {
   const navigation = useNavigation<DailyPlanNavProp>();
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const isPortrait = height >= width;
 
-  // Ustawienia status baru
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
     StatusBar.setBarStyle('light-content');
@@ -63,33 +54,24 @@ export default function DailyPlanScreen() {
     }, [])
   );
 
+
+  // Jeśli chcesz dodać tekst przed numerem dnia, np. "Dzień X. ..."
   const renderItem = ({ item }: { item: number }) => (
     <TouchableOpacity
-      style={styles.tileWrapper}
+      style={styles.tile}
       onPress={() => navigation.navigate('DailyPlanDetail', { day: item })}
     >
-      <View style={styles.tile}>
-        {/* Lewy pasek z numerem dnia */}
-        <View style={styles.leftStrip}>
-          <Text style={styles.leftText}>Dzień {item}</Text>
-        </View>
-        {/* Prawa część z nazwą dnia */}
-        <View style={styles.rightContent}>
-          <Text style={styles.rightText}>{weekdayNames[item]}</Text>
-        </View>
-      </View>
+      <Text style={styles.tileText}>{`Dzień ${item}.   -   ${weekdayNames[item]}`}</Text>
     </TouchableOpacity>
   );
-
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#333333" barStyle="light-content" translucent={false} />
       <FlatList
         data={days}
-        keyExtractor={(item) => item.toString()}
+        keyExtractor={item => item.toString()}
         renderItem={renderItem}
-        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 16 }]}
-        ListFooterComponent={() => <View style={{ height: insets.bottom + 50 }} />}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       />
     </View>
   );
@@ -98,47 +80,25 @@ export default function DailyPlanScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#556B2F',
-  },
-  list: {
-    paddingVertical: 16,
-  },
-  tileWrapper: {
-    marginVertical: 8,
-    marginHorizontal: 24,
+    backgroundColor: '#0e8569',
   },
   tile: {
-    flexDirection: 'row',
+    backgroundColor: '#01503d',
+    marginVertical: 6,
+    marginHorizontal: 16,
     borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 3,
   },
-  leftStrip: {
-    width: '30%',
-    backgroundColor: '#F0E68C',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  leftText: {
+  tileText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  rightContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  rightText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    color: '#f2d94e',
+    textAlign: 'left',
   },
 });

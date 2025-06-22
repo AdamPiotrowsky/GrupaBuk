@@ -1,83 +1,86 @@
 // components/Tile.tsx
-import React from 'react'
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
-  ImageSourcePropType
-} from 'react-native'
+  ImageSourcePropType,
+} from 'react-native';
 
+/* ---------- props ---------- */
 type Props = {
-  title: string
-  icon: ImageSourcePropType
-  color: string
-  onPress: () => void
-  titleStyle?: object
-  accessoryIcon?: ImageSourcePropType
-}
+  title: string;
+  color: string;                          // tło kafelka
+  onPress: () => void;
+  icon: ImageSourcePropType;              // główna ikonka (PNG / JPG)
+  accessoryIcon?: ImageSourcePropType;    // opcjonalnie po prawej
+  titleStyle?: object;
+};
 
-export default function Tile({ title, icon, color, onPress, titleStyle, accessoryIcon }: Props) {
+export default function Tile({
+  title,
+  color,
+  onPress,
+  icon,
+  accessoryIcon,
+  titleStyle,
+}: Props) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={[styles.iconWrapper, { backgroundColor: color }]}>  
+    <TouchableOpacity style={[styles.container, { backgroundColor: color }]} onPress={onPress}>
+      {/* ikona po lewej */}
+      <View style={styles.iconWrapper}>
         <Image source={icon} style={styles.icon} resizeMode="contain" />
       </View>
+
+      {/* tytuł */}
       <View style={styles.textWrapper}>
-        <Text style={[styles.title, titleStyle]}>{title}</Text>
+        <Text style={[styles.title, titleStyle]} numberOfLines={2}>
+          {title}
+        </Text>
       </View>
+
+      {/* opcjonalna ikonka po prawej */}
       {accessoryIcon && (
         <View style={styles.accessoryWrapper}>
           <Image source={accessoryIcon} style={styles.accessoryIcon} resizeMode="contain" />
         </View>
       )}
     </TouchableOpacity>
-  )
+  );
 }
 
+/* ---------- styles ---------- */
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 70,
-    marginVertical: 6,
+    height: 60,
+    marginVertical: 5,
     width: '100%',
     alignSelf: 'center',
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    overflow: 'hidden',
-    elevation: 3,
+    borderRadius: 22,
+    elevation: 15,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
   },
-  iconWrapper: {
-    width: 60,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  icon: {
-    width: 32,
-    height: 32
-  },
-  textWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 12
-  },
+
+  /* ikona  -------------------------------------------------- */
+  iconWrapper: { width: 60, justifyContent: 'center', alignItems: 'center' },
+  icon:        { width: 38, height: 38 },
+
+  /* tytuł  -------------------------------------------------- */
+  textWrapper: { flex: 1, justifyContent: 'center', paddingHorizontal: 4 },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333'
+    fontFamily: 'LeagueSpartan-Bold',
+    color: '#f2d94e',
+    letterSpacing: -0.5,
   },
-  accessoryWrapper: {
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  accessoryIcon: {
-    width: 24,
-    height: 24
-  }
-})
+
+  /* accessory  --------------------------------------------- */
+  accessoryWrapper: { width: 40, justifyContent: 'center', alignItems: 'center' },
+  accessoryIcon:    { width: 70, height: 70, marginRight: 12 },
+});

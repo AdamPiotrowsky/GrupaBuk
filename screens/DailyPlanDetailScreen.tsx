@@ -1,23 +1,27 @@
 // screens/DailyPlanDetailScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
-  Modal,
-  TouchableOpacity,
-  StatusBar,
+  View, Text, StyleSheet, ScrollView, Image, Dimensions, Modal,
+  TouchableOpacity, StatusBar,
 } from 'react-native';
 import dailyPlans from './data/dailyplan.json';
+import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import {
+  PinchGestureHandler,
+  PinchGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedGestureHandler,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 
 type Plan = {
-  day: number;
-  date: string;
-  weekday: string;
-  intention: string;
+  day: number; date: string; weekday: string; intention: string;
   start: { location: string; time: string };
   finish: { location: string; time: string };
   mass: { location: string; time: string };
@@ -25,7 +29,7 @@ type Plan = {
   image: string;
 };
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
+const { width: W, height: H } = Dimensions.get('window');
 
 const planImages: Record<string, any> = {
   'day1.jpg': require('../assets/plans/day1.jpg'),
@@ -41,87 +45,110 @@ const planImages: Record<string, any> = {
   'day11.jpg': require('../assets/plans/day11.jpg'),
 };
 
-// Mapowanie polskich etykiet
-const labelMap: Record<string, string> = {
-  start: 'Start',
-  finish: 'Meta',
-  mass: 'Msza',
-  meal: 'Posiłek',
-};
+const labelMap = { start: 'Start', finish: 'Meta', mass: 'Msza', meal: 'Posiłek' } as const;
 
 export default function DailyPlanDetailScreen({ route }: any) {
-  const { day } = route.params as { day: number };
-  const plan = (dailyPlans as Plan[]).find(p => p.day === day);
-  const [modalVisible, setModalVisible] = useState(false);
+  const insets  = useSafeAreaInsets();
+  const { day } = route.params;
+  const plan    = (dailyPlans as Plan[]).find(p => p.day === day);
+  const [open, setOpen] = useState(false);
 
-  if (!plan) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>No data for Day {day}</Text>
-      </View>
-    );
-  }
+  /* -------- pinch shared value -------- */
+  const scale = useSharedValue(1);
 
-  const imageSource = planImages[plan.image];
+  const pinch = useAnimatedGestureHandler<
+    PinchGestureHandlerGestureEvent,
+    { start: number }
+  >({
+    onStart: (_, ctx) => {
+      ctx.start = scale.value;
+      runOnJS(console.log)('pinch start');          // log w Metro
+    },
+    onActive: (e, ctx) => {
+      let s = ctx.start * e.scale;
+      if (s < 1) s = 1;
+      if (s > 3) s = 3;
+      scale.value = s;
+    },
+  });
 
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  /* reset po zamknięciu */
+  useEffect(() => {
+    if (!open) scale.value = withTiming(1, { duration: 100 });
+  }, [open]);
+
+  useFocusEffect(
+    useCallback(() => {
+      StatusBar.setBackgroundColor('#333333');
+      StatusBar.setBarStyle('light-content');
+    }, [])
+  );
+
+  if (!plan) return <View style={styles.center}><Text style={{color:'#fff'}}>Brak danych</Text></View>;
+  const imgSrc = planImages[plan.image];
+
+  /* ---------- render ---------- */
   return (
     <View style={styles.screen}>
-      <StatusBar backgroundColor="#333333" barStyle="light-content" />
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.dateText}>{plan.date} – {plan.weekday}</Text>
-        <Text style={styles.intention}>{plan.intention}</Text>
-
-        {(['start', 'finish', 'mass', 'meal'] as (keyof typeof labelMap)[]).map(key => {
-          const item = plan[key];
-          return (
-            <View key={key} style={styles.infoRow}>
-              <Text style={styles.label}>{labelMap[key]}</Text>
-              <Text style={styles.time}>{item.time}</Text>
-              <Text style={styles.place}>{item.location}</Text>
-            </View>
-          );
-        })}
-
-        {imageSource && (
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Image source={imageSource} style={styles.planImage} resizeMode="cover" />
+      <ScrollView contentContainerStyle={[styles.wrapper, { paddingBottom: insets.bottom + 16 }]}>
+        <Text style={styles.h1}>{plan.date} – {plan.weekday}</Text>
+        <Text style={styles.h2}>{plan.intention}</Text>
+        {(Object.keys(labelMap) as (keyof typeof labelMap)[]).map(k => (
+          <View key={k} style={styles.row}>
+            <Text style={styles.label}>{labelMap[k]}</Text>
+            <Text style={styles.time}>{plan[k].time}</Text>
+            <Text style={styles.place}>{plan[k].location}</Text>
+          </View>
+        ))}
+        {!!imgSrc && (
+          <TouchableOpacity onPress={() => setOpen(true)} activeOpacity={0.9}>
+            <Image source={imgSrc} style={styles.thumb} />
           </TouchableOpacity>
         )}
       </ScrollView>
 
-      <Modal visible={modalVisible} transparent onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalBackground}>
-          <TouchableOpacity style={styles.modalSideArea} onPress={() => setModalVisible(false)} />
-          <ScrollView
-            contentContainerStyle={styles.modalContent}
-            maximumZoomScale={3}
-            minimumZoomScale={1}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-          >
-            <Image source={imageSource} style={styles.modalImage} resizeMode="contain" />
-          </ScrollView>
-          <TouchableOpacity style={styles.modalSideArea} onPress={() => setModalVisible(false)} />
+      {/* ------------ MODAL ------------ */}
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <View style={styles.modalBg}>
+          {/* obszar nad zdjęciem */}
+          <TouchableOpacity style={styles.side} onPress={() => setOpen(false)} />
+          {/* zdjęcie z pinch */}
+          <PinchGestureHandler onGestureEvent={pinch}>
+            <Animated.Image
+              source={imgSrc}
+              style={[styles.fullImg, animStyle]}
+              resizeMode="contain"
+            />
+          </PinchGestureHandler>
+          {/* obszar pod zdjęciem */}
+          <TouchableOpacity style={styles.side} onPress={() => setOpen(false)} />
         </View>
       </Modal>
     </View>
   );
 }
 
+/* ------------- STYLE ------------- */
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#556B2F' },
-  container: { padding: 16 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#556B2F' },
-  errorText: { color: '#fff', fontSize: 18 },
-  dateText: { fontSize: 24, fontWeight: 'bold', color: '#fff', textAlign: 'center', marginBottom: 8 },
-  intention: { fontSize: 20, color: '#f0e68c', textAlign: 'center', marginBottom: 16, fontWeight: 'bold' },
-  infoRow: { flexDirection: 'row', marginBottom: 12, alignItems: 'center' },
+  screen:  { flex: 1, backgroundColor: '#0e8569' },
+  wrapper: { padding: 16 },
+  center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#556B2F' },
+
+  h1: { fontSize: 24, fontWeight: 'bold', color: '#f2d94e', textAlign: 'center', marginBottom: 8 },
+  h2: { fontSize: 20, color: '#f2d94e', textAlign: 'center', marginBottom: 16, fontWeight: 'bold' },
+
+  row:   { flexDirection: 'row', marginBottom: 12, alignItems: 'center' },
   label: { width: 80, fontSize: 18, fontWeight: '600', color: '#fff' },
-  time: { width: 70, fontSize: 18, fontWeight: 'bold', color: '#fff' },
+  time:  { width: 70, fontSize: 18, fontWeight: 'bold',  color: '#fff' },
   place: { flex: 1, fontSize: 18, color: '#fff' },
-  planImage: { width: windowWidth - 32, height: (windowWidth - 32) * 0.75, marginTop: 24, borderRadius: 12, alignSelf: 'center' },
-  modalBackground: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
-  modalSideArea: { flex: 1, width: '100%' },
-  modalContent: { justifyContent: 'center', alignItems: 'center', width: windowWidth, height: windowHeight * 0.6 },
-  modalImage: { width: windowWidth, height: windowHeight * 0.6 },
+
+  thumb:   { width: W - 32, height: (W - 32) * 0.75, marginTop: 24, borderRadius: 12, alignSelf: 'center' },
+
+  modalBg: { flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.9)' },
+  side:    { flex: 1 },          // kliknięcie zamyka modal
+  fullImg: { width: W * 0.9, height: H * 0.7, alignSelf: 'center' },
 });
