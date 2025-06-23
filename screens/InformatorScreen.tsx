@@ -49,7 +49,7 @@ export default function InfoScreen() {
     }, [])
   );
 
-  // Dane listy (można też wyrzucić jeśli już nie potrzebne)
+  // Dane listy
   const smallBagItems = [
     'różańiec',
     'peleryna przeciwdeszczowa',
@@ -97,16 +97,29 @@ export default function InfoScreen() {
           { paddingBottom: insets.bottom + 24 },
         ]}
       >
-        <Text style={styles.header}>Lista rzeczy do wzięcia na pielgrzymkę</Text>
+        {/* Nagłówek z tłem */}
+        <View style={styles.headerWrapper}>
+          <Text style={styles.header}>Lista rzeczy do wzięcia na pielgrzymkę</Text>
+        </View>
 
-        <Text style={styles.sectionHeader}>MAŁY BAGAŻ PODRĘCZNY - PLECAK:</Text>
+        {/* Sekcja: mały bagaż */}
+        <View style={styles.sectionWrapper}>
+          <Text style={styles.sectionHeader}>
+            MAŁY BAGAŻ PODRĘCZNY - PLECAK:
+          </Text>
+        </View>
         {smallBagItems.map((item, idx) => (
           <Text key={`small-${idx}`} style={styles.bulletText}>
             • {item}
           </Text>
         ))}
 
-        <Text style={styles.sectionHeader}>DUŻY BAGAŻ/WALIZKA JADĄCY NA AUCIE:</Text>
+        {/* Sekcja: duży bagaż */}
+        <View style={[styles.sectionWrapper, { marginTop: 16 }]}>
+          <Text style={styles.sectionHeader}>
+            DUŻY BAGAŻ/WALIZKA {'\n'} JADĄCY NA AUCIE:
+          </Text>
+        </View>
         {largeBagItems.map((item, idx) => (
           <Text key={`large-${idx}`} style={styles.bulletText}>
             • {item}
@@ -130,7 +143,7 @@ export default function InfoScreen() {
             style={styles.navButton}
             onPress={() => navigation.navigate('Autor')}
           >
-            <Text style={styles.navButtonText}>Podziękowania</Text>
+            <Text style={styles.navButtonText}>...</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -141,31 +154,53 @@ export default function InfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0e8569',
+    backgroundColor: '#0e8569', // spójne tło
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+  },
+  /* Tło pod nagłówkiem */
+  headerWrapper: {
+    backgroundColor: '#01503d',
+    borderRadius: 0,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    marginBottom: 0,
+    width: '100%', // aby zajmowało całą szerokość
+    alignItems: 'center', // centrowanie tekstu w poziomie
   },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#f2d94e',
     textAlign: 'center',
-    marginBottom: 16,
+    width: '100%', // aby tekst zajmował całą szerokość
+    
+  },
+  /* Tło pod sectionHeader */
+  sectionWrapper: {
+    backgroundColor: '#01503d',
+    borderRadius: 0,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start', // aby nie rozciągało się na 100% szerokości (można usunąć, jeśli wolisz pełną szerokość)
+    marginBottom: 8,
+    width: '100%', // aby zajmowało całą szerokość
   },
   sectionHeader: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#f2d94e',
-    marginTop: 12,
-    marginBottom: 8,
+    textAlign: 'center',
+    width: '100%', // aby tekst zajmował całą szerokość
+    lineHeight: 24,
+    marginBottom: 4,
   },
   bulletText: {
     fontSize: 16,
     color: '#fff',
     lineHeight: 24,
-    marginLeft: 8,
+    marginLeft: 22,
+    marginRight: 22,
     marginBottom: 4,
   },
   note: {
@@ -173,6 +208,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 16,
     fontStyle: 'italic',
+    marginLeft: 22,
+    marginRight: 22,
   },
   buttonsContainer: {
     marginTop: 24,

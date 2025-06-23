@@ -55,6 +55,7 @@ export default function Tile({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    alignItems: 'center',   // dodane, aby wszystkie dzieci były wyśrodkowane w pionie
     height: 60,
     marginVertical: 5,
     width: '100%',
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     fontFamily: 'LeagueSpartan-Bold',
     color: '#f2d94e',
     letterSpacing: -0.5,
+    lineHeight: 30
   },
 
   /* accessory  --------------------------------------------- */

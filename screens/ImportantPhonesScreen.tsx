@@ -6,51 +6,60 @@ import {
   FlatList,
   StatusBar,
   Linking,
+  useWindowDimensions,
 } from 'react-native';
 import Tile from '../components/Tile';
 
-// Lista telefonów
-type PhoneEntry = { key: string; name: string; phone: string; icon: any };
+type PhoneEntry = {
+  key: string;
+  name: string;
+  phone: string;
+  icon: any;
+};
+
 const phoneList: PhoneEntry[] = [
-  { key: '1', phone: '551 234 123', name: 'Pan Geniu', icon: require('../assets/icon_phone.png') },
-  { key: '2', phone: '377 321 333', name: 'Jan',       icon: require('../assets/icon_phone.png') },
+  { key: '1', phone: '111 222 333', name: 'Pan Geniu', icon: require('../assets/icons/icon_phone.png') },
+  { key: '2', phone: '444 555 666', name: 'Ks Jan',       icon: require('../assets/icons/icon_phone.png') },
+  { key: '3', phone: '777 888 999', name: 'Pan Marek',     icon: require('../assets/icons/icon_phone.png') },
+  { key: '4', phone: '000 111 222', name: 'Szef drogówki',     icon: require('../assets/icons/icon_phone.png') },
 ];
 
+
 export default function ImportantPhonesScreen() {
+  const insets = useWindowDimensions();
+
   const makeCall = (phone: string) => {
     const cleaned = phone.replace(/\s+/g, '');
     Linking.openURL(`tel:${cleaned}`).catch(err => console.error('Failed to open dialer', err));
   };
 
   return (
-    <>
+    <View style={styles.screen}>
       <StatusBar backgroundColor="#333333" barStyle="light-content" />
-      <View style={styles.container}>
-        <FlatList
-          data={phoneList}
-          keyExtractor={item => item.key}
-          contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <View style={styles.tileWrapper}>
-              <Tile
-                title={`${item.phone} – ${item.name}`}
-                icon={item.icon}
-                color="#F0E68C"
-                onPress={() => makeCall(item.phone)}
-                titleStyle={styles.titleText}
-              />
-            </View>
-          )}
-        />
-      </View>
-    </>
+      <FlatList
+        data={phoneList}
+        keyExtractor={item => item.key}
+        contentContainerStyle={[styles.list]}
+        renderItem={({ item }) => (
+          <View style={styles.tileWrapper}>
+            <Tile
+              title={`${item.phone} – ${item.name}`}
+              icon={item.icon}
+              color="#01503d"                    // ciemnozielone tło kafelka
+              titleStyle={styles.titleText}     // żółty tekst
+              onPress={() => makeCall(item.phone)}
+            />
+          </View>
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: '#556B2F',
+    backgroundColor: '#0e8569',  // spójne tło ekranu
   },
   list: {
     paddingVertical: 16,
@@ -63,6 +72,6 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: '#f2d94e',            // żółty, jak w reszcie aplikacji
   },
 });

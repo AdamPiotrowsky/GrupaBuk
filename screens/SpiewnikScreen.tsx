@@ -15,7 +15,7 @@ import {
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import songs from './data/piesni.json';
+import songs from '../data/songs.json';
 
 type Song = { id: string; title: string; text: string };
 

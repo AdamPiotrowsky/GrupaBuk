@@ -17,6 +17,7 @@ import InformatorScreen from './screens/InformatorScreen';
 import AutorScreen from './screens/AutorScreen';
 import ZapisyScreen from './screens/ZapisyScreen';
 import PlaylistScreen from './screens/PlaylistScreen';  
+import PlaylistEditScreen from './screens/PlaylistEditScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,13 +58,19 @@ export default function App() {
             component={ImportantPhonesScreen}
             options={{ title: 'Ważne telefony' }}
           />
-          <Stack.Screen name="Informator" component={InformatorScreen} />
-          <Stack.Screen name="Autor" component={AutorScreen} options={{ title: 'Autor' }} />
+          <Stack.Screen name="Informator" component={InformatorScreen} options={{ title: 'Co zabrać na pielgrzymkę' }} />
+          <Stack.Screen name="Autor" component={AutorScreen} options={{ title: 'Podziękowania' }} />
           <Stack.Screen name="Zapisy" component={ZapisyScreen} />
           <Stack.Screen
-           name="Playlist"
-           component={PlaylistScreen}
-           options={({ route }) => ({ title: route.params.listName })}/>
+            name="PlaylistEdit"
+            component={PlaylistEditScreen}
+            options={({ route }) => ({ title: `Edytuj: ${route.params.listName}` })}
+          />
+          <Stack.Screen
+            name="Playlist"
+            component={PlaylistScreen}
+            options={({ route }) => ({ title: route.params.listName })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
