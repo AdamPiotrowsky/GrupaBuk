@@ -3,18 +3,20 @@
     "name": "GrupaBuk",
     "slug": "GrupaBuk",
     "version": "1.0.0",
+    "sdkVersion": "52.0.0",
     "orientation": "default",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-     "assetBundlePatterns": ["**/*"]
+      "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.konnar55.GrupaBuk"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,12 +27,27 @@
       "package": "com.konnar55.GrupaBuk"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo.png"
     },
     "extra": {
       "eas": {
         "projectId": "c5167f81-69b1-4ce6-a427-f4a5cbbd3cc9"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
+    ]
   }
 }

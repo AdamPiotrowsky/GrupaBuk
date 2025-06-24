@@ -1,0 +1,54 @@
+// android/settings.gradle
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+
+    // 1. React Native Gradle Plugin (RN 0.71+)
+    // rootDir to katalog android/, więc rootDir.parentFile to katalog główny projektu GrupaBuk
+    def rnPluginDir = new File(rootDir.parentFile, "node_modules/react-native-gradle-plugin")
+    if (rnPluginDir.exists() && rnPluginDir.isDirectory()) {
+        includeBuild(rnPluginDir)
+        logger.lifecycle("Including React Native Gradle Plugin from: ${rnPluginDir.absolutePath}")
+    } else {
+        logger.lifecycle("WARNING: Nie znaleziono @react-native/gradle-plugin w: ${rnPluginDir.absolutePath}. Pomijam includeBuild dla RN Gradle Plugin.")
+    }
+
+    // 2. Expo Gradle Plugin dla autolinkingu Expo Modules
+    def expoAutolinkingPkgDir = new File(rootDir.parentFile, "node_modules/expo-modules-autolinking")
+    def expoGradlePluginDir = new File(expoAutolinkingPkgDir, "android/expo-gradle-plugin")
+    if (expoGradlePluginDir.exists() && expoGradlePluginDir.isDirectory()) {
+        includeBuild(expoGradlePluginDir)
+        logger.lifecycle("Including Expo Gradle Plugin from: ${expoGradlePluginDir.absolutePath}")
+    } else {
+        logger.lifecycle("WARNING: Nie znaleziono expo-gradle-plugin w: ${expoGradlePluginDir.absolutePath}. Sprawdź, czy zainstalowano expo-modules-autolinking.")
+    }
+}
+
+plugins {
+    id "com.facebook.react.settings"
+    id "expo-autolinking-settings"
+}
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+    if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
+        ex.autolinkLibrariesFromCommand()
+    } else {
+        ex.autolinkLibrariesFromCommand(expoAutolinking.rnConfigCommand)
+    }
+}
+
+// Włącz autolinkowanie modułów Expo
+expoAutolinking.useExpoModules()
+
+// Nazwa root projektu
+rootProject.name = 'GrupaBuk'
+
+// Opcjonalnie: jeśli korzystasz z version catalog dla Expo Modules
+expoAutolinking.useExpoVersionCatalog()
+
+// Dołączenie modułu aplikacji
+include ':app'

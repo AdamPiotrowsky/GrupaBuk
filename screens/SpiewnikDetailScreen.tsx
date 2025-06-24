@@ -32,7 +32,7 @@ export default function SpiewnikDetailScreen({ route }: any) {
   const scrollRef = useRef<ScrollView>(null);
 
   // --- Font size ---
-  const [fontSize, setFontSize] = useState(16);
+  const [fontSize, setFontSize] = useState(17);
   const FONT_KEY = '@spiewnik_font_size';
 
   // --- Background themes ---
@@ -61,11 +61,15 @@ export default function SpiewnikDetailScreen({ route }: any) {
   // Show “scroll to top” button
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Load persisted settings
+  // Load persisted settings (fontSize domyślnie 16)
   useEffect(() => {
     AsyncStorage.getItem(FONT_KEY).then(v => {
-      const n = Number(v);
-      if (!isNaN(n)) setFontSize(n);
+      if (v != null) {
+        const n = Number(v);
+        if (!isNaN(n) && n > 0) {
+          setFontSize(n);
+        }
+      }
     });
     AsyncStorage.getItem(BG_KEY).then(v => {
       const i = Number(v);
@@ -247,7 +251,6 @@ const styles = StyleSheet.create({
   content:   { padding: 16 },
   text:      { lineHeight: 24 },
 
-  /* Scroll-to-top button */
   topButton:     {
     position: 'absolute',
     backgroundColor: '#01503d',
@@ -262,7 +265,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
-  /* modal */
   modalOverlay:         {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
