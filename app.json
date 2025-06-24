@@ -3,7 +3,6 @@
     "name": "GrupaBuk",
     "slug": "GrupaBuk",
     "version": "1.0.0",
-    "sdkVersion": "52.0.0",
     "orientation": "default",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
@@ -13,10 +12,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.konnar55.GrupaBuk"
+      "bundleIdentifier": "com.konnar55.GrupaBuk",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
