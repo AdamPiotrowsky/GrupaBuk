@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  tileWrapper: { marginVertical: 6, marginHorizontal: 16, width: '90%' },
+  tileWrapper: { marginVertical: 6, width: '90%', alignSelf: 'center' },
   headerImg: { width: '100%', height: windowH * 0.37, marginBottom: 10 },
   footerImg: { width: '100%', height: 140, marginTop: 8 },
 });

@@ -222,6 +222,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 6,
+    marginRight: 8,
   },
   removeBtnText: {
     color: '#fff',

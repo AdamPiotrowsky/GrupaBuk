@@ -9,13 +9,14 @@ import {
   StatusBar,
   useWindowDimensions,
   Platform,
+  TextInput,
 } from 'react-native';
 import { RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import songs from '../data/songs.json'; // upewnij się, że to mówi o właściwej ścieżce
+import songs from '../data/songs.json';
 
 type Song = { id: string; title: string; text: string };
 
@@ -23,29 +24,21 @@ type RootStackParamList = {
   Playlist: { listName: string };
   PlaylistEdit: { listName: string };
   SpiewnikDetail: { song: Song };
-  // ... inne ekrany
 };
 
 type PlaylistEditRouteProp = RouteProp<RootStackParamList, 'PlaylistEdit'>;
 type PlaylistEditNavProp = NativeStackNavigationProp<RootStackParamList, 'PlaylistEdit'>;
 
-export default function PlaylistEditScreen({
-  route,
-}: {
-  route: PlaylistEditRouteProp;
-  navigation: PlaylistEditNavProp;
-}) {
+export default function PlaylistEditScreen({ route }: { route: PlaylistEditRouteProp }) {
   const navigation = useNavigation<PlaylistEditNavProp>();
   const insets = useSafeAreaInsets();
   const { height, width } = useWindowDimensions();
   const isPortrait = height >= width;
-
   const { listName } = route.params;
 
-  // Zestaw ID zaznaczonych piosenek
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Przy mount: ładujemy istniejące IDs z AsyncStorage
   useEffect(() => {
     navigation.setOptions({ title: `Edycja: ${listName}` });
     (async () => {
@@ -53,20 +46,14 @@ export default function PlaylistEditScreen({
         const json = await AsyncStorage.getItem(`playlist-${listName}`);
         if (json) {
           const arr: string[] = JSON.parse(json);
-          if (Array.isArray(arr)) {
-            setSelectedIds(new Set(arr));
-          }
-        } else {
-          setSelectedIds(new Set());
+          setSelectedIds(new Set(Array.isArray(arr) ? arr : []));
         }
       } catch (e) {
         console.warn('Błąd wczytywania playlisty:', e);
-        setSelectedIds(new Set());
       }
     })();
   }, [listName, navigation]);
 
-  // StatusBar styl
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBackgroundColor('#333333');
@@ -75,36 +62,38 @@ export default function PlaylistEditScreen({
     }, [])
   );
 
-  // Toggle zaznaczenia ID
   const toggleId = (id: string) => {
     setSelectedIds(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
+      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
       return newSet;
     });
   };
 
-  // Zapis: zapisujemy do AsyncStorage i goBack
   const saveAndGoBack = async () => {
     try {
-      const arr = Array.from(selectedIds);
-      await AsyncStorage.setItem(`playlist-${listName}`, JSON.stringify(arr));
+      await AsyncStorage.setItem(
+        `playlist-${listName}`,
+        JSON.stringify(Array.from(selectedIds))
+      );
     } catch (e) {
       console.warn('Błąd zapisu playlisty:', e);
     }
     navigation.goBack();
   };
 
-  // Render pojedynczej piosenki z checkboxem
+  const filteredSongs = (songs as Song[]).filter(s =>
+    s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.id.includes(searchQuery)
+  );
+
   const renderItem = ({ item }: { item: Song }) => {
     const isSelected = selectedIds.has(item.id);
     return (
       <TouchableOpacity
-        style={styles.songRow}
+        style={[styles.songRow, isSelected && styles.songRowSelected]}
         onPress={() => toggleId(item.id)}
       >
-        {/* Checkbox prosty: kwadrat z tick lub puste */}
         <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
           {isSelected && <Text style={styles.checkboxTick}>✓</Text>}
         </View>
@@ -115,15 +104,28 @@ export default function PlaylistEditScreen({
 
   return (
     <View style={styles.container}>
-      {/* Lista wszystkich piosenek */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Szukaj pieśni..."
+          placeholderTextColor="#666"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchQuery('')}>
+            <Text style={styles.clearButton}>×</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
       <FlatList
-        data={songs as Song[]}
+        data={filteredSongs}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: insets.bottom + 16, paddingTop: 8 }}
       />
 
-      {/* Przyciski Zapisz / Anuluj */}
       <View style={styles.buttonsRow}>
         <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
           <Text style={styles.cancelButtonText}>Anuluj</Text>
@@ -138,6 +140,27 @@ export default function PlaylistEditScreen({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0e8569' },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#01503d',
+  },
+  searchInput: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 40,
+    fontSize: 16,
+    color: '#000',
+  },
+  clearButton: {
+    marginLeft: 8,
+    fontSize: 24,
+    color: '#888',
+  },
   songRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -147,6 +170,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     backgroundColor: '#01503d',
     borderRadius: 8,
+  },
+  songRowSelected: {
+    backgroundColor: '#013427',
   },
   checkbox: {
     width: 24,
