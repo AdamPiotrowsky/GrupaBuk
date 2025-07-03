@@ -1,4 +1,5 @@
 // screens/HomeScreen.tsx
+
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -17,6 +18,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import Tile from '../components/Tile';
 
+
+
 const { height: windowH } = Dimensions.get('window');
 
 // Typy nawigacji
@@ -31,9 +34,25 @@ type RootStackParamList = {
 type HomeNavProp = NativeStackNavigationProp<RootStackParamList, 'Menu'>;
 
 const ZAPISY_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSeYdHi8-eIwPcN5IuHnF34laMaoQSj7OOt7jLiNGNaMBuTyZw/viewform';
+  'https://forms.gle/ETuaSA6yd2mJUKVFA';
 
 const menuItems = [
+    {
+    key: 'plan',
+    title: 'INFORMACJE NA KAŻDY DZIEŃ',
+    action: 'navigate' as const,
+    screen: 'DailyPlan',
+    icon: require('../assets/icons/plan.png'),
+  },
+
+    {
+    key: 'informator',
+    title: 'CO ZABRAĆ NA PIELGRZYMKĘ',
+    action: 'navigate' as const,
+    screen: 'Informator',
+    icon: require('../assets/icons/checklist.png'),
+  },
+
   {
     key: 'spiewnik',
     title: 'ŚPIEWNIK',
@@ -41,23 +60,10 @@ const menuItems = [
     screen: 'Śpiewnik',
     icon: require('../assets/icons/spiewnik.png'),
   },
-  {
-    key: 'plan',
-    title: 'INFORMACJE NA KAŻDY DZIEŃ',
-    action: 'navigate' as const,
-    screen: 'DailyPlan',
-    icon: require('../assets/icons/plan.png'),
-  },
-  {
-    key: 'informator',
-    title: 'CO ZABRAĆ NA PIELGRZYMKĘ',
-    action: 'navigate' as const,
-    screen: 'Informator',
-    icon: require('../assets/icons/checklist.png'),
-  },
+
   {
     key: 'zapisy',
-    title: 'ZAPISY',
+    title: 'INTENCJE',
     action: 'link' as const,
     url: ZAPISY_URL,
     icon: require('../assets/icons/form.png'),
@@ -167,6 +173,7 @@ export default function HomeScreen() {
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.key}
+        scrollEnabled={false}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
         contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}

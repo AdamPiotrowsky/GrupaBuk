@@ -18,10 +18,12 @@ type PhoneEntry = {
 };
 
 const phoneList: PhoneEntry[] = [
-  { key: '1', phone: '111 222 333', name: 'Pan Geniu', icon: require('../assets/icons/icon_phone.png') },
-  { key: '2', phone: '444 555 666', name: 'Ks Jan',       icon: require('../assets/icons/icon_phone.png') },
-  { key: '3', phone: '777 888 999', name: 'Pan Marek',     icon: require('../assets/icons/icon_phone.png') },
-  { key: '4', phone: '000 111 222', name: 'Szef drogówki',     icon: require('../assets/icons/icon_phone.png') },
+  { key: '1', phone: '600 287 233', name: 'Ks. Jan Cieślak - przewodnik',       icon: require('../assets/icons/icon_phone.png') },
+  { key: '2', phone: '781 640 276', name: 'Ks. Rafał Walid - kierownik PPPnJG',     icon: require('../assets/icons/icon_phone.png') },
+  { key: '3', phone: '509 275 669', name: 'Pan Geniu - kierowca przy grupie ', icon: require('../assets/icons/icon_phone.png') },
+  { key: '4', phone: '721 055 703', name: 'Pan Marcel - kierowca auta z bagażami', icon: require('../assets/icons/icon_phone.png') },
+  { key: '5', phone: '600 544 122', name: 'Dariusz - drogówka', icon: require('../assets/icons/icon_phone.png') },
+  { key: '6', phone: '504 404 298', name: 'Franciszek - lekarz', icon: require('../assets/icons/icon_phone.png') },
 ];
 
 
@@ -43,7 +45,7 @@ export default function ImportantPhonesScreen() {
         renderItem={({ item }) => (
           <View style={styles.tileWrapper}>
             <Tile
-              title={`${item.phone} – ${item.name}`}
+              title={`${item.name}`}
               icon={item.icon}
               color="#01503d"                    // ciemnozielone tło kafelka
               titleStyle={styles.titleText}     // żółty tekst

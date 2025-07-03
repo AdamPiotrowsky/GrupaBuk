@@ -5,7 +5,6 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
-  Text,
   StyleSheet,
   StatusBar,
   useWindowDimensions,
@@ -15,6 +14,8 @@ import {
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import Text from '../components/MyText';      // Twój komponent Text z allowFontScaling=false
 import songs from '../data/songs.json';
 
 type Song = { id: string; title: string; text: string };
@@ -24,11 +25,32 @@ type RootStackParamList = {
   Śpiewnik: undefined;
   SpiewnikDetail: { song: Song };
   Playlist: { listName: string };
+  Autor: undefined;
 };
 type SpiewnikNavProp = NativeStackNavigationProp<RootStackParamList, 'Śpiewnik'>;
 
-// cztery stałe zestawy
 const FIXED_LISTS = ['Zestaw 1', 'Zestaw 2', 'Zestaw 3', 'Zestaw 4'];
+
+/** 
+ * Uproszczona normalizacja:
+ * - na małe litery
+ * - rozbicie diakrytyków Unicode
+ * - usunięcie znaków diakrytycznych
+ * - usunięcie podstawowych przystanków
+ */
+function normalize(str: string) {
+  return str
+    .toLowerCase()
+    // ręcznie zamieniamy ł → l
+    .replace(/ł/g, 'l')
+    // teraz rozbijamy pozostałe diakrytyki
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    // usuwamy interpunkcję
+    .replace(/[.,!?…:;"'()\-]/g, '')
+    .trim();
+}
+
 
 export default function SpiewnikScreen() {
   const navigation = useNavigation<SpiewnikNavProp>();
@@ -44,6 +66,7 @@ export default function SpiewnikScreen() {
     StatusBar.setBarStyle('light-content');
     StatusBar.setTranslucent(false);
   }, [isPortrait]);
+
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBackgroundColor('#333333');
@@ -52,9 +75,14 @@ export default function SpiewnikScreen() {
     }, [])
   );
 
-  const filtered = songs.filter(s =>
-    s.title.toLowerCase().includes(query.toLowerCase())
-  );
+  // znormalizowany query
+  const normQ = normalize(query);
+
+  // filtr
+  const filtered = songs.filter(s => {
+    const haystack = normalize(s.title + ' ' + s.text);
+    return normQ === '' || haystack.includes(normQ);
+  });
 
   return (
     <View style={styles.container}>
@@ -62,7 +90,7 @@ export default function SpiewnikScreen() {
       <View style={styles.searchRow}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Szukaj pieśni..."
+          placeholder="Szukaj fragmentu..."
           placeholderTextColor="#999"
           value={query}
           onChangeText={setQuery}
@@ -78,35 +106,39 @@ export default function SpiewnikScreen() {
       <FlatList
         data={filtered}
         keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.songTile}
-            onPress={() =>
-              navigation.navigate('SpiewnikDetail', { song: item })
-            }
+            onPress={() => navigation.navigate('SpiewnikDetail', { song: item })}
           >
             <Text style={styles.songText}>
               {`${item.id}. ${item.title}`}
             </Text>
           </TouchableOpacity>
         )}
+        ListFooterComponent={() => (
+          <TouchableOpacity
+            style={styles.thanksButton}
+            onPress={() => navigation.navigate('Autor')}
+          >
+            <Text style={styles.thanksButtonText}>...</Text>
+          </TouchableOpacity>
+        )}
       />
 
-      {/* nowy, lekki modal */}
+      {/* modal wyboru zestawów */}
       <Modal
         visible={listsVisible}
         transparent
         animationType="fade"
         onRequestClose={() => setListsVisible(false)}
       >
-        {/* tło, tapnięcie tutaj zamyka modal */}
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setListsVisible(false)}
         >
-          {/* główne okienko menu */}
           <View style={styles.modalBox}>
             {FIXED_LISTS.map(name => (
               <TouchableOpacity
@@ -128,10 +160,8 @@ export default function SpiewnikScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0e8569',
-  },
+  container: { flex: 1, backgroundColor: '#0e8569' },
+
   searchRow: {
     flexDirection: 'row',
     margin: 16,
@@ -159,6 +189,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+
   songTile: {
     backgroundColor: '#01503d',
     marginVertical: 6,
@@ -179,7 +210,20 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 
-  /* modal */
+  thanksButton: {
+    backgroundColor: '#f2d94e',
+    marginHorizontal: 16,
+    marginTop: 16,
+    paddingVertical: 12,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  thanksButtonText: {
+    color: '#01503d',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -189,11 +233,11 @@ const styles = StyleSheet.create({
   modalBox: {
     width: '70%',
     backgroundColor: '#0e8569',
-    borderRadius: 33,
-    paddingVertical: 2,
+    borderRadius: 12,
+    paddingVertical: 8,
   },
   modalItem: {
-    paddingVertical: 18,
+    paddingVertical: 14,
   },
   modalItemText: {
     fontSize: 18,

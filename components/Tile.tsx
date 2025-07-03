@@ -2,12 +2,14 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
   ImageSourcePropType,
 } from 'react-native';
+import Text from '../components/MyText';
+import MyTextInput from '../components/MyTextInput';
+
 
 /* ---------- props ---------- */
 type Props = {

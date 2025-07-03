@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   FlatList,
-  Text,
   TouchableOpacity,
   StyleSheet,
   StatusBar,
@@ -14,6 +13,7 @@ import { RouteProp, useFocusEffect, useNavigation } from '@react-navigation/nati
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Text from '../components/MyText';
 
 import songs from '../data/songs.json'; // upewnij się, że ścieżka jest ok
 

@@ -1,17 +1,27 @@
-// screens/InfoScreen.tsx
 import React, { useEffect, useCallback } from 'react';
 import {
   View,
   ScrollView,
-  Text,
   StyleSheet,
   StatusBar,
   useWindowDimensions,
   TouchableOpacity,
+  Platform,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Text from '../components/MyText';
+
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
+import * as IntentLauncher from 'expo-intent-launcher';
+import * as WebBrowser from 'expo-web-browser';
+import * as Sharing from 'expo-sharing';
+
+// Wymuś bundlowanie PDF przez Metro
+import PDF_FILE from '../data/Mszalik-2025.pdf';
 
 type RootStackParamList = {
   Menu: undefined;
@@ -23,18 +33,16 @@ type RootStackParamList = {
   Informator: undefined;
   Autor: undefined;
   Zapisy: undefined;
-  Info: undefined;
 };
 
-type InfoNavProp = NativeStackNavigationProp<RootStackParamList, 'Info'>;
+type NavProp = NativeStackNavigationProp<RootStackParamList, 'Informator'>;
 
-export default function InfoScreen() {
+export default function InformatorScreen() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
-  const navigation = useNavigation<InfoNavProp>();
+  const navigation = useNavigation<NavProp>();
 
-  // Ustawienia StatusBar
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
     StatusBar.setBarStyle('light-content');
@@ -49,9 +57,8 @@ export default function InfoScreen() {
     }, [])
   );
 
-  // Dane listy
   const smallBagItems = [
-    'różańiec',
+    'różaniec',
     'peleryna przeciwdeszczowa',
     'czapka z daszkiem lub inne nakrycie głowy',
     'krem z filtrem',
@@ -60,7 +67,7 @@ export default function InfoScreen() {
     'kanapki na ten pierwszy dzień',
     'chusteczki, mogą być nawilżane',
     'mały płyn do dezynfekcji',
-    'bluża/lekka kurtka (na siebie lub do plecaka)',
+    'bluza/lekka kurtka (na siebie lub do plecaka)',
     'menażka / kubek / miseczka lub jednorazowe naczynia',
     'łyżka (najbardziej potrzebna), nóż, widelec (może plastikowe)',
     'kocyk/mata do odpoczynku w trasie',
@@ -87,63 +94,76 @@ export default function InfoScreen() {
     'ładowarka do telefonu',
     'powerbank (opcjonalnie)',
     'leki przyjmowane na stałe, opatrunki',
+    'zestaw do przebijania bombelków (igły, octanisept)',
+    'wapno, witaminy',
+    'maści do nóg (np. lioton, olofen max)',
+    'krem na otarcia (np. bepanthen)',
   ];
+
+  const openPdf = async () => {
+    try {
+      // 1. Pobierz asset i uzyskaj jego URI
+      const asset = Asset.fromModule(PDF_FILE);
+      await asset.downloadAsync();
+      const bundleUri = asset.localUri ?? asset.uri;
+
+      // 2. Skopiuj do DocumentDirectory
+      const destUri = FileSystem.documentDirectory + 'Mszalik-2025.pdf';
+      await FileSystem.copyAsync({ from: bundleUri, to: destUri });
+
+      if (Platform.OS === 'android') {
+        // Android: użyj systemowego misownika
+        const contentUri = await FileSystem.getContentUriAsync(destUri);
+        await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+          data: contentUri,
+          flags: 1,
+          type: 'application/pdf',
+        });
+      } else {
+        // iOS: pokaż share-sheet, użytkownik wybierze „Zapisz w Plikach”
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(destUri, {
+            mimeType: 'application/pdf',
+            dialogTitle: 'Pobierz Mszalik 2025',
+          });
+        } else {
+          // fallback: otwórz w przeglądarce
+          await WebBrowser.openBrowserAsync(destUri);
+        }
+      }
+    } catch (e: any) {
+      console.error('Błąd przy otwieraniu PDF:', e);
+      Alert.alert('Błąd', `Nie udało się otworzyć Mszalika: ${e.message}`);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 24 },
-        ]}
-      >
-        {/* Nagłówek z tłem */}
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.headerWrapper}>
           <Text style={styles.header}>Lista rzeczy do wzięcia na pielgrzymkę</Text>
         </View>
 
-        {/* Sekcja: mały bagaż */}
         <View style={styles.sectionWrapper}>
-          <Text style={styles.sectionHeader}>
-            MAŁY BAGAŻ PODRĘCZNY - PLECAK:
-          </Text>
+          <Text style={styles.sectionHeader}>MAŁY BAGAŻ PODRĘCZNY – PLECAK:</Text>
         </View>
-        {smallBagItems.map((item, idx) => (
-          <Text key={`small-${idx}`} style={styles.bulletText}>
-            • {item}
-          </Text>
+        {smallBagItems.map((item, i) => (
+          <Text key={`small-${i}`} style={styles.bulletText}>• {item}</Text>
         ))}
 
-        {/* Sekcja: duży bagaż */}
         <View style={[styles.sectionWrapper, { marginTop: 16 }]}>
-          <Text style={styles.sectionHeader}>
-            DUŻY BAGAŻ/WALIZKA {'\n'} JADĄCY NA AUCIE:
-          </Text>
+          <Text style={styles.sectionHeader}>DUŻY BAGAŻ/WALIZKA – JADĄCY NA AUCIE:</Text>
         </View>
-        {largeBagItems.map((item, idx) => (
-          <Text key={`large-${idx}`} style={styles.bulletText}>
-            • {item}
-          </Text>
+        {largeBagItems.map((item, i) => (
+          <Text key={`large-${i}`} style={styles.bulletText}>• {item}</Text>
         ))}
 
-        <Text style={styles.note}>
-          Pamiętaj, że można dokupić coś w mijanym sklepie, a także poratować się nawzajem wśród
-          pielgrzymów. 😊
-        </Text>
-
-        {/* Dwa przyciski: Ważne telefony i Autor */}
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => navigation.navigate('ImportantPhones')}
-          >
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('ImportantPhones')}>
             <Text style={styles.navButtonText}>Ważne telefony</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => navigation.navigate('Autor')}
-          >
-            <Text style={styles.navButtonText}>...</Text>
+          <TouchableOpacity style={styles.navButton} onPress={openPdf}>
+            <Text style={styles.navButtonText}>Mszalik 2025</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -151,47 +171,41 @@ export default function InfoScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0e8569', // spójne tło
+    backgroundColor: '#0e8569',
   },
-  scrollContent: {
-  },
-  /* Tło pod nagłówkiem */
+  scrollContent: {},
   headerWrapper: {
     backgroundColor: '#01503d',
-    borderRadius: 0,
     paddingVertical: 12,
     paddingHorizontal: 12,
     marginBottom: 0,
-    width: '100%', // aby zajmowało całą szerokość
-    alignItems: 'center', // centrowanie tekstu w poziomie
+    width: '100%',
+    alignItems: 'center',
   },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#f2d94e',
     textAlign: 'center',
-    width: '100%', // aby tekst zajmował całą szerokość
-    
+    width: '100%',
   },
-  /* Tło pod sectionHeader */
   sectionWrapper: {
     backgroundColor: '#01503d',
-    borderRadius: 0,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    alignSelf: 'flex-start', // aby nie rozciągało się na 100% szerokości (można usunąć, jeśli wolisz pełną szerokość)
     marginBottom: 8,
-    width: '100%', // aby zajmowało całą szerokość
+    width: '100%',
   },
   sectionHeader: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#f2d94e',
     textAlign: 'center',
-    width: '100%', // aby tekst zajmował całą szerokość
+    width: '100%',
     lineHeight: 24,
     marginBottom: 4,
   },

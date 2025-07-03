@@ -3,7 +3,6 @@ import React, { useEffect, useCallback, useState, useRef } from 'react';
 import {
   View,
   ScrollView,
-  Text,
   StyleSheet,
   StatusBar,
   useWindowDimensions,
@@ -15,6 +14,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Text from '../components/MyText';
 
 export default function SpiewnikDetailScreen({ route }: any) {
   const song = route?.params?.song;

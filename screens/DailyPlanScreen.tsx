@@ -4,7 +4,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Text,
   StyleSheet,
   StatusBar,
   useWindowDimensions,
@@ -12,13 +11,7 @@ import {
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-// Mapowanie dni na nazwy dni tygodnia
-const weekdayNames: Record<number, string> = {
-  1: 'sobota',  2: 'niedziela', 3: 'poniedziałek', 4: 'wtorek',
-  5: 'środa',   6: 'czwartek', 7: 'piątek',     8: 'sobota',
-  9: 'niedziela',10: 'poniedziałek',11: 'wtorek',
-};
+import Text from '../components/MyText';
 
 type RootStackParamList = {
   Menu: undefined;
@@ -34,11 +27,19 @@ type DailyPlanNavProp = NativeStackNavigationProp<RootStackParamList, 'DailyPlan
 
 const days = Array.from({ length: 11 }, (_, i) => i + 1);
 
+function addDays(date: Date, days: number) {
+  const copy = new Date(date);
+  copy.setDate(copy.getDate() + days);
+  return copy;
+}
+
 export default function DailyPlanScreen() {
   const navigation = useNavigation<DailyPlanNavProp>();
   const insets = useSafeAreaInsets();
   const { height, width } = useWindowDimensions();
   const isPortrait = height >= width;
+
+  const startDate = new Date(2025, 6, 5);
 
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
@@ -54,16 +55,23 @@ export default function DailyPlanScreen() {
     }, [])
   );
 
+  const renderItem = ({ item }: { item: number }) => {
+    const date = addDays(startDate, item - 1);
+    const formatted = date.toLocaleDateString('pl-PL', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+    return (
+      <TouchableOpacity
+        style={styles.tile}
+        onPress={() => navigation.navigate('DailyPlanDetail', { day: item })}
+      >
+        <Text style={styles.tileText}>{`Dzień ${item}.  –  ${formatted}`}</Text>
+      </TouchableOpacity>
+    );
+  };
 
-  // Jeśli chcesz dodać tekst przed numerem dnia, np. "Dzień X. ..."
-  const renderItem = ({ item }: { item: number }) => (
-    <TouchableOpacity
-      style={styles.tile}
-      onPress={() => navigation.navigate('DailyPlanDetail', { day: item })}
-    >
-      <Text style={styles.tileText}>{`Dzień ${item}.   -   ${weekdayNames[item]}`}</Text>
-    </TouchableOpacity>
-  );
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#333333" barStyle="light-content" translucent={false} />
@@ -98,6 +106,7 @@ const styles = StyleSheet.create({
   tileText: {
     fontSize: 18,
     fontWeight: 'bold',
+    maxFontSizeMultiplier: 1,
     color: '#f2d94e',
     textAlign: 'left',
   },

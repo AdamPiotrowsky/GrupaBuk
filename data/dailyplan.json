@@ -9,7 +9,7 @@
     "mass":    { "location": "Buk",            "time": "7:00" },
     "meal":    { "location": "Granowo",        "time": "12:30" },
     "image": "day1.jpg",
-    "distance": "29,0 km",
+    "distance": "28,7 km",
     "route": "https://www.google.com/maps/dir/Parafia+%C5%9Bw.+Stanis%C5%82awa+Biskupa+w+Buku,+Mury+30,+64-320+Buk/Granowo/52.1297032,16.5082585/@52.2383079,16.4013132,35461m/data=!3m1!1e3!4m15!4m14!1m5!1m1!1s0x470436e07ed7c2dd:0x59ff4ab8d91af11c!2m2!1d16.518698!2d52.35655!1m5!1m1!1s0x4705b5575b18bec5:0x538c18e8b4244e14!2m2!1d16.528766!2d52.2223285!1m0!3e2?entry=ttu"
   },
   {
@@ -22,7 +22,7 @@
     "mass":    { "location": "Kościan – Fara ",         "time": "12:00" },
     "meal":    { "location": "Racot",            "time": "14:00" },
     "image": "day2.jpg",
-    "distance": "28,7 km",
+    "distance": "38,7 km",
     "route": "https://www.google.com/maps/dir/52.1297032,16.5082585/52.1297032,16.5082585/52.1297032,16.5082585/@52.1297032,16.5082585,15z/data=!3m1!4b1!4m2!4m1!3e2?entry=ttu"
   },
 
@@ -36,7 +36,7 @@
     "mass":    { "location": "Krzywiń",            "time": "7:00" },
     "meal":    { "location": "Łęka Wielka",        "time": "13:00" },
     "image": "day3.jpg",
-    "distance": "27,9 km",
+    "distance": "27,3 km",
     "route": "https://www.google.com/maps/dir/51.9632246,16.817176/51.860352,16.8341657/51.7717075,16.9351782/@51.8662124,16.8003901,27677m/data=!3m1!1e3!4m2!4m1!3e2?entry=ttu"
   },
 
@@ -50,7 +50,7 @@
     "mass":    { "location": "Pudliszki",            "time": "7:15" },
     "meal":    { "location": "Magdalenki, czeluścinek",        "time": "12:00" },
     "image": "day4.jpg",
-    "distance": "37,5 km",
+    "distance": "37,4 km",
     "route": "https://www.google.pl/maps/dir/51.7717533,16.9352539/51.7283859,17.1640018/51.7196795,17.2240035/51.6487486,17.373312/@51.7249331,17.0499842,26440m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -63,7 +63,7 @@
     "mass":    { "location": "Zduny",            "time": "9:00" },
     "meal":    { "location": "Remiza Zduny",        "time": "" },
     "image": "day5.jpg",
-    "distance": "27,5 km",
+    "distance": "27,8 km",
     "route": "https://www.google.pl/maps/dir/51.6488217,17.3735068/51.6464341,17.3779692/51.5914996,17.6359016/51.542507,17.6490285/@51.5988259,17.4354161,20294m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -76,7 +76,7 @@
     "mass":    { "location": "Czarnylas",            "time": "11:45" },
     "meal":    { "location": "Remiza Szklarka Przygodzicka",        "time": "" },
     "image": "day6.jpg",
-    "distance": "30,0 km",
+    "distance": "29,9 km",
     "route": "https://www.google.pl/maps/dir/51.5425994,17.6490561/51.5068456,17.7636488/51.4380909,17.8291041/51.4035406,17.8627275/51.3991577,17.8601936/51.3787305,17.8397257/@51.4556875,17.6554489,29047m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -89,7 +89,7 @@
     "mass":    { "location": "Parzynów",            "time": "10:00" },
     "meal":    { "location": "Boisko Rzetnia",        "time": " " },
     "image": "day7.jpg",
-    "distance": "26,1 km",
+    "distance": "25,9 km",
     "route": "https://www.google.pl/maps/dir/51.3787047,17.8396471/Ko%C5%9Bci%C3%B3%C5%82+%C5%9Bw.+Miko%C5%82aja+w+Parzynowie/51.3233989,17.9559273/51.282409,18.0028272/51.2423031,18.0416397/@51.3218317,17.8991793,21475m/data=!3m1!1e3!4m12!4m11!1m0!1m5!1m1!1s0x0:0xda70f95bf6f1cd0f!2m2!1d17.901658!2d51.3700721!1m0!1m0!1m0!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -102,7 +102,7 @@
     "mass":    { "location": "Opatów",            "time": "9:45" },
     "meal":    { "location": "OSiR Bolesławiec",        "time": " " },
     "image": "day8.jpg",
-    "distance": "29,8 km",
+    "distance": "30,4 km",
     "route": "https://www.google.pl/maps/dir/51.2422977,18.04164/51.2389224,18.041114/51.2159234,18.080329/51.2121247,18.146889/51.1559427,18.3299363/51.1705388,18.3853495/@51.2110783,18.1274435,23143m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -112,10 +112,10 @@
     "intention": "Za zmarłych",
     "start":   { "location": "Skomlin",            "time": "9:00" },
     "finish":  { "location": "Zajączki Drugie",   "time": "19:30" },
-    "mass":    { "location": "Skomlin",            "time": "8:00" },
+    "mass":    { "location": "Skomlin",            "time": "7:15" },
     "meal":    { "location": "Remiza Gana",        "time": "" },
     "image": "day9.jpg",
-    "distance": "33,1 km",
+    "distance": "32,8 km",
     "route": "https://www.google.pl/maps/dir/51.1706946,18.385911/51.0405564,18.5955709/51.0366069,18.5973001/51.0243009,18.6086211/51.0065191,18.6193912/51.0019874,18.6183854/50.9910842,18.6818625/@51.0768636,18.4157163,28255m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl&authuser=0&entry=ttu"
   },
   {
@@ -141,7 +141,7 @@
     "mass":    { "location": "Jasna Góra – Wały",            "time": "16:00" },
     "meal":    { "location": "nie ma :(",        "time": "" },
     "image": "day11.jpg",
-    "distance": "16,4 km",
+    "distance": "16,3 km",
     "route": "https://www.google.pl/maps/dir/50.8638248,18.9472573/50.837168,18.9853475/50.8469336,19.0450917/50.8311811,19.0708037/50.8314723,19.0829805/50.8184275,19.0983859/50.8145084,19.0985912/50.8140801,19.1038591/50.8123287,19.1002656/@50.8466037,18.9875246,9523m/data=!3m1!1e3!4m2!4m1!3e2?hl=pl-PL&entry=ttu"
   }
 ]

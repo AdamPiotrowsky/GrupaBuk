@@ -2,7 +2,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   Image,
@@ -16,6 +15,9 @@ import {
 import dailyPlans from '../data/dailyplan.json'; // upewnij się, że ścieżka jest poprawna
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Text from '../components/MyText';
+import MyTextInput from '../components/MyTextInput';
+
 
 type Plan = {
   day: number;
@@ -35,7 +37,7 @@ type Plan = {
 const { width: W, height: H } = Dimensions.get('window');
 
 // Mapowanie etykiet
-const labelMap = { start: 'Start', finish: 'Meta', mass: 'Msza', meal: 'Posiłek' } as const;
+const labelMap = { mass: 'Msza', start: 'Start', meal: 'Obiad', finish: 'Meta' } as const;
 
 // Mapowanie obrazków
 const planImages: Record<string, any> = {
@@ -91,7 +93,7 @@ export default function DailyPlanDetailScreen({ route }: any) {
   let distanceText: string | undefined = undefined;
   if (plan.distance !== undefined) {
     if (typeof plan.distance === 'number') {
-      distanceText = `${plan.distance} km`;
+      distanceText = `${plan.distance}\u00A0km`;
     } else if (typeof plan.distance === 'string') {
       distanceText = plan.distance;
     }
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   h1: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#f2d94e',
     textAlign: 'center',
@@ -225,8 +227,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   row: { flexDirection: 'row', marginBottom: 12, alignItems: 'center' },
-  label: { width: 80, fontSize: 18, fontWeight: '600', color: '#f2d94e' },
-  time: { width: 70, fontSize: 18, fontWeight: 'bold', color: '#fff' },
+  label: { width: 80, fontSize: 18, fontWeight: '600', color: '#f2d94e',  },
+  time: { width: 82, fontSize: 18, fontWeight: 'bold', color: '#fff', },
   place: { flex: 1, fontSize: 18, color: '#fff' },
 
   thumb: {

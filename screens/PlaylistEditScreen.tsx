@@ -3,18 +3,20 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
-  Text,
   TouchableOpacity,
   StyleSheet,
   StatusBar,
   useWindowDimensions,
   Platform,
   TextInput,
+  Text as RNText,
+  Image,
 } from 'react-native';
 import { RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Text from '../components/MyText';
 
 import songs from '../data/songs.json';
 
@@ -29,7 +31,11 @@ type RootStackParamList = {
 type PlaylistEditRouteProp = RouteProp<RootStackParamList, 'PlaylistEdit'>;
 type PlaylistEditNavProp = NativeStackNavigationProp<RootStackParamList, 'PlaylistEdit'>;
 
-export default function PlaylistEditScreen({ route }: { route: PlaylistEditRouteProp }) {
+export default function PlaylistEditScreen({
+  route,
+}: {
+  route: PlaylistEditRouteProp;
+}) {
   const navigation = useNavigation<PlaylistEditNavProp>();
   const insets = useSafeAreaInsets();
   const { height, width } = useWindowDimensions();
@@ -38,6 +44,16 @@ export default function PlaylistEditScreen({ route }: { route: PlaylistEditRoute
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Helper do "inteligentnego" normalize
+  const normalize = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/[łŁ]/g, 'l')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[.,!?…:;"'()\-\[\]]/g, '')
+      .trim();
 
   useEffect(() => {
     navigation.setOptions({ title: `Edycja: ${listName}` });
@@ -63,7 +79,7 @@ export default function PlaylistEditScreen({ route }: { route: PlaylistEditRoute
   );
 
   const toggleId = (id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const newSet = new Set(prev);
       newSet.has(id) ? newSet.delete(id) : newSet.add(id);
       return newSet;
@@ -82,10 +98,15 @@ export default function PlaylistEditScreen({ route }: { route: PlaylistEditRoute
     navigation.goBack();
   };
 
-  const filteredSongs = (songs as Song[]).filter(s =>
-    s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.id.includes(searchQuery)
-  );
+  // filtrowanie przy użyciu normalize na title i text
+  const filteredSongs = (songs as Song[]).filter((s) => {
+    const q = normalize(searchQuery);
+    return (
+      s.id.includes(searchQuery) ||
+      normalize(s.title).includes(q) ||
+      normalize(s.text).includes(q)
+    );
+  });
 
   const renderItem = ({ item }: { item: Song }) => {
     const isSelected = selectedIds.has(item.id);
@@ -121,16 +142,25 @@ export default function PlaylistEditScreen({ route }: { route: PlaylistEditRoute
 
       <FlatList
         data={filteredSongs}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 16, paddingTop: 8 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 16,
+          paddingTop: 8,
+        }}
       />
 
       <View style={styles.buttonsRow}>
-        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.cancelButtonText}>Anuluj</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton} onPress={saveAndGoBack}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={saveAndGoBack}
+        >
           <Text style={styles.saveButtonText}>Zapisz</Text>
         </TouchableOpacity>
       </View>
@@ -209,6 +239,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#c0392b',
     paddingHorizontal: 20,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    marginBottom: Platform.OS === 'ios' ? 0 : 16,
     borderRadius: 6,
   },
   cancelButtonText: {
@@ -221,10 +252,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     borderRadius: 6,
+    marginBottom: Platform.OS === 'ios' ? 0 : 16,
+    textAlign: 'center',
   },
   saveButtonText: {
     color: '#01503d',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

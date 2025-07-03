@@ -1,17 +1,39 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <!-- Główny motyw aplikacji -->
   <style name="AppTheme" parent="Theme.EdgeToEdge">
     <item name="android:textColor">@android:color/black</item>
     <item name="android:editTextStyle">@style/ResetEditText</item>
     <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="android:statusBarColor">#ffffff</item>
+    <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    <!-- Tu możesz podmienić domyślny styl przycisków: -->
+        <!-- kolor paska nawigacyjnego -->
+    <item name="android:navigationBarColor">@color/splashscreen_background</item>
+    <!-- czy ikony systemowe mają być ciemne (true) czy jasne (false) -->
+    <item name="android:windowLightNavigationBar">false</item>
+    <item name="android:buttonStyle">@style/WhiteButton</item>
   </style>
+
   <style name="ResetEditText" parent="@android:style/Widget.EditText">
     <item name="android:padding">0dp</item>
     <item name="android:textColorHint">#c8c8c8</item>
     <item name="android:textColor">@android:color/black</item>
   </style>
+
+  <!-- Motyw używany przy starcie (SplashScreen) -->
   <style name="Theme.App.SplashScreen" parent="AppTheme">
-    <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+    <!-- ustawiamy tło na kolor z colors.xml -->
+    <item name="android:windowBackground">@color/splashscreen_background</item>
   </style>
+
+  <!-- Definicja białych przycisków -->
+  <style name="WhiteButton" parent="@android:style/Widget.Material.Button">
+    <item name="android:backgroundTint">@color/button_background_white</item>
+    <item name="android:textColor">@color/button_text_white</item>
+  </style>
+
 </resources>
