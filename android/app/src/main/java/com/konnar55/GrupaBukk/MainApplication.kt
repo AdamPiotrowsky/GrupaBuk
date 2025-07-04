@@ -1,4 +1,4 @@
-package com.konnar55.GrupaBuk
+package com.konnar55.GrupaBukk
 
 import android.app.Application
 import android.content.res.Configuration

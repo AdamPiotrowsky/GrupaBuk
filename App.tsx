@@ -16,6 +16,7 @@ import AutorScreen from './screens/AutorScreen';
 import ZapisyScreen from './screens/ZapisyScreen';
 import PlaylistScreen from './screens/PlaylistScreen';
 import PlaylistEditScreen from './screens/PlaylistEditScreen';
+import * as NavigationBar from 'expo-navigation-bar';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,9 @@ export default function App() {
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
     StatusBar.setBarStyle('light-content');
+
+    NavigationBar.setBackgroundColorAsync('#0e8569');   // Twój zielony
+    NavigationBar.setButtonStyleAsync('light');         // białe ikony
   }, []);
 
   return (
