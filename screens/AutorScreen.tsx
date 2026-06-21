@@ -1,184 +1,133 @@
 // screens/AutorScreen.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   StatusBar,
-  useWindowDimensions,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from '../components/MyText';
 
 
 const compliments = [
+  "Masz w sobie coś takiego, że przy Tobie człowiekowi od razu robi się lżej.",
+  "Dobrze, że jesteś w tej grupie — robisz klimat, którego nie da się podrobić.",
+  "Masz uśmiech, który działa lepiej niż kawa na postoju.",
+  "Z Tobą nawet dłuższy etap wydaje się trochę krótszy.",
+  "Masz dobrą energię — taką, którą inni naprawdę czują.",
+  "Potrafisz poprawić humor samą obecnością.",
+  "Jesteś jedną z tych osób, przy których łatwiej się nie poddawać.",
+  "Masz talent do robienia zwykłych chwil trochę lepszymi.",
+  "Twoje poczucie humoru powinno być wpisane w plan dnia.",
+  "Dzięki Tobie ta pielgrzymka ma więcej uśmiechu.",
+  "Masz w sobie spokój, który udziela się innym.",
+  "Jesteś dowodem na to, że dobre towarzystwo naprawdę dodaje sił.",
+  "Z Tobą rozmowa sama się klei, nawet kiedy nogi już nie bardzo.",
+  "Masz w sobie tyle życzliwości, że można by nią obdzielić pół grupy.",
+  "Twój uśmiech powinien być oficjalnym punktem regeneracyjnym.",
+  "Masz świetną umiejętność rozładowywania napięcia.",
+  "Przy Tobie nawet zmęczenie wygląda trochę mniej groźnie.",
+  "Jesteś osobą, której obecność po prostu dobrze robi.",
+  "Masz naturalny dar dodawania ludziom otuchy.",
+  "Z Tobą łatwiej iść dalej — dosłownie i w przenośni.",
 
+  "Masz dobry vibe. Taki pielgrzymkowy, ale premium.",
+  "Twoja energia jest jak dodatkowy baton w plecaku — ratuje sytuację.",
+  "Masz uśmiech, który mógłby dostać własną pieczątkę w książeczce pielgrzyma.",
+  "Gdyby dobra atmosfera była konkursem, byłbyś/byłabyś w finale.",
+  "Z Tobą nawet asfalt ma trochę więcej sensu.",
+  "Masz talent do mówienia czegoś dokładnie wtedy, kiedy ktoś tego potrzebuje.",
+  "Twoje żarty powinny być puszczane przez megafon na trudniejszych odcinkach.",
+  "Dobrze, że idziesz — grupa od razu ma lepszy skład.",
+  "Masz w sobie coś, co sprawia, że ludzie chcą iść obok Ciebie.",
+  "Twoja obecność to taki mały luksus na trasie.",
+  "Gdyby życzliwość miała krokomierz, miałbyś/miałabyś rekord dnia.",
+  "Masz serce większe niż plecak po pakowaniu na ostatnią chwilę.",
+  "Twój humor ma lepszą trasę niż Google Maps.",
+  "Jesteś jak cień w upalny dzień — bardzo potrzebny/potrzebna.",
+  "Z Tobą nawet postój bez krzesła brzmi jak dobry pomysł.",
+  "Masz styl bycia, który mówi: spokojnie, damy radę.",
+  "Twój śmiech powinien być zapisany jako punkt programu.",
+  "Masz taką energię, że nawet powerbank mógłby się od Ciebie ładować.",
+  "Twoje dobre słowo potrafi zrobić komuś cały dzień.",
+  "Jesteś chodzącym argumentem za tym, że warto być życzliwym.",
 
-"Twój uśmiech rozjaśnia nawet najciemniejszy mrok,\nZ Tobą każdy dzień nabiera sensu w pewnym kroku w krok.",
-"Gdy wchodzisz w mrok, rozpraszasz go swym blaskiem mrok,\nI każdy stawiany przez Ciebie krok prowadzi do celu w krok.",
-"Twoja obecność przegania lęk skrywany w mrok,\nZ Tobą bez wahania podejmuję każdy krok mimo mrok.",
-"Twoja pasja przeobraża zwykłe działania w talent,\nA każdy twój pomysł staje się wyjątkowym, ulotnym moment.",
-"Dzięki Tobie drzemiące zdolności zyskują nowy talent,\nI w Twoim zasięgu każdy dzień staje się wyjątkowym moment.",
-"Twoje umiejętności rozkwitają jak kwiat pod wpływem talent,\nI w Twoim cieniu nawet szary dzień staje się jasnym moment.",
-"Twoja wytrwałość w marszu dodaje sił w znużonymi nogami,\nBo z Tobą dobrze  chodzi się każdymi drogami.",
-"Masz w sobie energię, która niesie Cię na zmęczonych nogach,\nI w Twoim towarzystwie każda ścieżka staje się ciekawą drogą.",
-"Twoja obecność wspiera w trudzie stąpania po kamienistych nogach,\nI z Tobą każda chwila marszu zamienia się w lekkość drogi.",
-"Twój entuzjazm pcha Cię naprzód, choć czasem boli noga,\nI w Twojej aurze nawet zbłądzona ścieżka staje się jak prosta droga.",
-"Twoja obecność rozświetla nawet pochmurny dzień,\nI z Tobą znika każdy lęk, rozwiewając ciemny cień.",
-        "Gdy zaczynasz dzień swoją pasją, mija każdy trudny dzień,\nI razem krok w krok przepędzamy smutek i cień.",
-        "Twoje słowa dodają blasku każdemu zaczynającego się dniu dzień,\nI w ich świetle tracą znaczenie wszelkie wątpliwości i cień.",
-  "Twój uśmiech rozświetla dzień.",
-  "Jesteś iskrą pozytywnej energii.",
-  "Twoje spojrzenie koi nerwy.",
-  "Masz w sobie spokój, który uspokaja.",
-  "Twoja obecność dodaje otuchy.",
-  "Masz talent do ciepłych słów.",
-  "Twoja kreatywność błyszczy w prostocie.",
-  "Twoja życzliwość inspiruje.",
-  "Masz w sobie siłę, której inni potrzebują.",
-  "Twoje słowo potrafi poprawić nastrój.",
-  "Jesteś odejściem od codziennego zgiełku.",
-  "Twoja pasja jest zaraźliwa.",
-  "Masz wyjątkowy sposób patrzenia na świat.",
-  "Twój spokój przypomina cichy poranek.",
-  "Twoja empatia czyni cuda.",
-  "Twoje wsparcie jest bezcenne.",
-  "Masz w sobie ciepło, które grzeje serca.",
-  "Twoja obecność to prawdziwy dar.",
-  "Twoja radość jest jak świeży oddech.",
-  "Masz niesamowity instynkt pomocny innym.",
-  "Twój entuzjazm popycha naprzód.",
-  "Jesteś latarnią wśród burz.",
-  "Twoja pewność siebie inspiruje.",
-  "Masz styl, który przyciąga wzrok.",
-  "Twój głos przekazuje poczucie bezpieczeństwa.",
-  "Twoja dobroć rozjaśnia dni.",
-  "Masz umiejętność zauważyć to, co ważne.",
-  "Twoja mądrość brzmi prosto, a jest cenna.",
-  "Twoja energia dodaje otuchy.",
-  "Masz talent do prostych gestów, które znaczą wiele.",
+  "Masz w sobie dużo ciepła i widać to bardziej niż myślisz.",
+  "Jesteś osobą, przy której inni mogą poczuć się swobodnie.",
+  "Masz wyjątkową umiejętność zauważania ludzi.",
+  "Twoja obecność jest cicha, ale bardzo ważna.",
+  "Masz w sobie dobro, które nie potrzebuje reklamy.",
+  "Potrafisz być wsparciem bez wielkich słów.",
+  "Jesteś kimś, kto wnosi spokój tam, gdzie robi się nerwowo.",
+  "Masz piękny sposób bycia — prosty, dobry i prawdziwy.",
+  "Dzięki Tobie komuś dzisiaj mogło być łatwiej.",
+  "Masz serce, które widać w małych gestach.",
+  "Twoja życzliwość jest bardzo konkretna — i bardzo potrzebna.",
+  "Jesteś osobą, którą dobrze mieć obok w drodze.",
+  "Masz w sobie pogodę ducha, która naprawdę pomaga.",
+  "Twoje dobre nastawienie jest zaraźliwe w najlepszym możliwym sensie.",
+  "Potrafisz sprawić, że ktoś czuje się zauważony.",
+  "Masz klasę w tym, jak traktujesz innych.",
+  "Twoja obecność dodaje grupie czegoś bardzo dobrego.",
+  "Jesteś przykładem, że proste dobro ma największą siłę.",
+  "Masz w sobie pokój, który potrafi uspokoić innych.",
+  "Twoje wsparcie może znaczyć dla kogoś więcej, niż myślisz.",
 
-  "Twój śmiech mógłby zostać hitem radia.",
-  "Masz poczucie humoru lepsze niż komik na scenie.",
-  "Z Tobą nawet korek na drodze staje się przygodą.",
-  "Twoje żarty mają własny GPS – zawsze trafiają w punkt.",
-  "Twoja energia jest jak espresso dla wszystkich wokoło.",
-  "Masz talent do rozbrajania napięcia jednym żartem.",
-  "Twój optymizm jest jak rollercoaster – wciąga wszystkich.",
-  "Z Tobą każdy dzień smakuje jak lody w upalny dzień.",
-  "Twój styl żartu jest bardziej soczysty niż arbuz w lecie.",
-  "Twoje pomysły na zabawę są kreatywne jak film komediowy.",
-  "Gdy mówisz, nawet kamienie zaczynają drżeć ze śmiechu.",
-  "Twój entuzjazm bawi bardziej niż memy w internecie.",
-  "Twoje anegdoty mają certyfikat śmiechu.",
-  "Twój humor rozczula nawet poważne miny.",
-  "Masz talent do improwizacji – jak stand-uper w terenie.",
-  "Twoje żarty wędrówki to jak komedia na żywo.",
-  "Z Tobą nawet GPS dostaje humoru.",
-  "Twoje pomysły podczas przerwy dodają energii wszystkim.",
-  "Twój śmiech mógłby być lekiem na nudę.",
-  "Masz w sobie magię, która przekształca rutynę w kabaret.",
+  "Masz krok pielgrzyma i serce człowieka, z którym chce się iść.",
+  "Twój śpiew dodaje odwagi nawet tym, którzy śpiewają tylko w myślach.",
+  "Masz w sobie wytrwałość, która inspiruje.",
+  "Twoja modlitwa i obecność są dla grupy prawdziwym wsparciem.",
+  "Idziesz tak, że człowiek przypomina sobie, po co jest w drodze.",
+  "Masz w sobie siłę, która nie musi być głośna, żeby była widoczna.",
+  "Twoja wiara ma w sobie dużo spokoju i autentyczności.",
+  "Potrafisz nieść dobrą atmosferę nawet wtedy, gdy nogi już protestują.",
+  "Masz w sobie coś z latarni — nie krzyczysz, ale pokazujesz kierunek.",
+  "Twoja obecność na trasie jest jak dobry znak.",
+  "Jesteś jednym z powodów, dla których ta droga zostanie dobrze zapamiętana.",
+  "Masz dar dodawania ludziom sił, nawet gdy sam/sama jesteś zmęczony/zmęczona.",
+  "Twoja cierpliwość na trasie robi wrażenie.",
+  "Z Tobą łatwiej uwierzyć, że każdy kilometr ma sens.",
+  "Masz w sobie pokorę i radość — bardzo dobre połączenie.",
+  "Twój sposób przeżywania tej drogi może być dla kogoś inspiracją.",
+  "Potrafisz iść z sercem, nie tylko z nogami.",
+  "Twoje dobre słowo na trasie może zostać z kimś na długo.",
+  "Masz w sobie ducha pielgrzyma — i to widać.",
+  "Dzięki Tobie ta droga jest bardziej wspólna.",
 
-  "Twoja pewność siebie wprawia w osłupienie – w dobrym sensie.",
-  "Twój spokój jest jak tajne hasło do dobrego samopoczucia.",
-  "Z Tobą cisza staje się ciekawa.",
-  "Twoja poważna mina po chwili rozbraja każdym uśmiechem.",
-  "Twoje spojrzenie mówi: ‘Dam radę’, i wszyscy to widzą.",
-  "Twoja zręczność w życiu przypomina akrobację w codzienności.",
-  "Twoja mowa ciała krzyczy: ‘Wszystko jest w porządku’, nawet gdy nie jest.",
-  "Masz dar upraszczania trudnych spraw – jak skrót klawiszowy życia.",
-  "Twoja pewna postawa to ukryta supermoc.",
-  "Twoje gesty mówią więcej niż 100 e-maili.",
-  "Twoja energia jest jak aktualizacja systemu – odświeżająca.",
-  "Masz talent do oglądania świata w zwolnionym tempie – i zachęcasz innych.",
-  "Twoja cierpliwość czasem jest zabawnie imponująca.",
-  "Twoja przyjaźń to najlepszy plot twist w życiu.",
-  "Twoje spojrzenie w przyszłość ma humor w tle.",
+  "Autor aplikacji podobno przyjmuje komplementy w każdej ilości.",
+  "Jeśli widzisz autora aplikacji, powiedz mu, że zrobił kawał dobrej roboty.",
+  "Ta aplikacja sama się nie napisała — autor zasłużył na dobre słowo.",
+  "Powiedz autorowi, że aplikacja działa tak dobrze, że aż podejrzanie.",
+  "Autor aplikacji zasługuje dziś na komplement, kawę i spokojny build bez błędów.",
+  "Jeśli autor jest obok, to właśnie znalazł się dobry moment, żeby go pochwalić.",
+  "Powiedz autorowi, że jego trud nie poszedł na marne — serio.",
+  "Ta aplikacja ma sens, bo ktoś poświęcił jej czas. Warto mu to powiedzieć.",
+  "Autorze, jeśli to czytasz: dobra robota. Możesz się uśmiechnąć.",
+  "Komplement dla autora: zrobiłeś coś, co naprawdę się przydaje.",
 
-  "Twój krok na szlaku jest pełen zdecydowania.",
-  "Twoja modlitwa niesie się lekko jak echo w górach.",
-  "Twój śpiew podczas wędrówki dodaje otuchy.",
-  "Masz siłę, by iść, gdy inni chcą zawrócić.",
-  "Twoja różańcowa modlitwa to melodia serca.",
-  "Z Tobą każdy kamień na drodze traci ciężar.",
-  "Twój entuzjazm w marszu budzi w nas zapał.",
-  "Masz talent do odnajdywania spokoju w ciszy sakralnej.",
-  "Twoja postawa w drodze przypomina spokój pielgrzyma.",
-  "Twój głos niosący śpiew rozbrzmiewa w dolinach.",
-  "Twój rytm kroków scala grupę w jedną melodię.",
-  "Masz dar dostrzegania świętości w prostocie wędrówki.",
-  "Twoja modlitwa w drodze koi serca zmęczone.",
-  "Twój uśmiech na postojach staje się błogosławieństwem.",
-  "Masz w sobie spokój, gdy wiara staje się oparciem.",
-  "Twoje słowa modlitwy dodają siły zmęczonym nogom.",
-  "Twój śpiew rozprasza chmury zwątpienia.",
-  "Masz wytrwałość, by przejść każdy etap pielgrzymki.",
-  "Twoja wiara to latarnia na szlaku życia.",
-  "Twoje proste ‘amen’ napełnia nadzieją.",
-  "Z Tobą nawet najdłuższy szlak staje się lekki.",
-  "Twój krok w ciszy przypomina modlitwę bez słów.",
-  "Twoje dźwięki różańca brzmią w sercach jak kojąca pieśń.",
-  "Masz odwagę iść tam, gdzie inni boją się ruszyć.",
-  "Twój śpiew wieczorny koi zmęczone dusze.",
-  "Twoja obecność w grupie pielgrzymów to wsparcie.",
-  "Masz talent do zbierania nadziei w każdym etapie drogi.",
-  "Twoja modlitwa w ciszy staje się echem w niebiosach.",
-  "Twój zapał w marszu jest jak tchnienie nowego dnia.",
-  "Twoje kroki łączą w sobie wiarę i nadzieję.",
-  "Masz w sobie spokój, gdy droga wydaje się niepewna.",
-  "Twój śpiew tworzy wspólną pieśń jedności.",
-  "Twoja postawa w drodze przypomina hołd pokory.",
-  "Twoja obecność w modlitwie grupowej dodaje mocy.",
-  "Twoje spojrzenie w drodze mówi: ‘Wierzę w to dalej’.",
-  "Twoja siła wędrówki jest inspiracją dla zmęczonych.",
-  
-  "Twój entuzjazm jest jak poranna mgła – orzeźwia.",
-  "Masz talent do dawania chwili wytchnienia.",
-  "Twoja obecność sprawia, że świat staje się prostszy.",
-  "Twój spokój działa jak reset dla nerwów.",
-  "Masz w sobie magię, która uspokaja burze myśli.",
-  "Twoja życzliwość jest jak ciepły koc w chłodny dzień.",
-  "Twoje słowa są balsamem dla zmęczonych dusz.",
-  "Masz talent do jasnego widzenia w trudnych chwilach.",
-  "Twoja pasja jest jak latarnia dla zagubionych.",
-  "Twój uśmiech to lekarstwo na szarą codzienność.",
-  "Masz w sobie ciepło, które można poczuć na odległość.",
-  "Twoja energia przypomina wiosnę po długiej zimie.",
-  "Twoje wsparcie przypomina trwały fundament.",
-  "Masz umiejętność odnajdywać światło w mroku.",
-  "Twoja obecność to najprostszy sposób na dobry dzień.",
-  "Twój optymizm jest jak świt po długiej nocy.",
-  "Masz talent do zamieniania problemów w wyzwania.",
-  "Twoja ufność przypomina siłę górskiego szczytu.",
-  "Twoja radość to zaraźliwy rytm życia.",
-  "Masz w sobie odwagę, którą inni chętnie naśladują.",
-  "Twoje słowa potrafią budować mosty porozumienia.",
-  "Masz w sobie spokój, który przenika innych.",
-  "Twoje wsparcie jest jak kompas w mapie życia.",
-  "Masz wyczucie, jak uczynić dzień lepszym od poprzedniego.",
-  "Twoja kreatywność świeci nawet w prostych gestach.",
-  "Twój optymizm pomaga widzieć możliwości.",
-  "Masz dar odnajdywania piękna w zwykłych chwilach.",
-  "Twoja obecność to zaproszenie do uśmiechu.",
-  "Masz w sobie talent, by usłyszeć to, co niewypowiedziane.",
-  "Twoja życzliwość przypomina cichość poranka.",
-  "Twoje gesty mówią: ‘jestem tu, możesz liczyć’.",
-  "Masz w sobie siłę, by przemieniać trud w naukę.",
-  "Twój śmiech dodaje lekkości każdemu spotkaniu.",
-  "Twoja postawa inspiruje do działania.",
-  "Masz w sobie pokorę wielkiego serca.",
-  "Twoja bliskość daje poczucie bezpieczeństwa.",
-  "Twój spokój rozprasza chmury codzienności.",
-  "Masz dar przemieniania zwykłej chwili w wyjątkową.",
+  "Masz dziś za zadanie powiedzieć komuś coś miłego. To jest oficjalne polecenie aplikacji.",
+  "Rozejrzyj się. Ktoś obok właśnie czeka na dobre słowo, nawet jeśli o tym nie wie.",
+  "Ten komplement działa najlepiej, gdy zostanie wypowiedziany na głos.",
+  "Powiedz to komuś obok: dobrze, że jesteś.",
+  "Zrób komuś dzień i powiedz mu coś dobrego bez żadnego powodu.",
+  "Najbliższa osoba obok właśnie wygrała darmowy komplement.",
+  "Nie chowaj tego tekstu dla siebie — podaj go dalej.",
+  "Uśmiech drugiej osoby za 3… 2… 1… teraz powiedz komplement.",
+  "Ten ekran nie został stworzony do czytania w ciszy. Powiedz to komuś.",
+  "Komplement niewypowiedziany traci 80% mocy. Użyj go od razu."
 ];
 
 export default function AutorScreen() {
   const [compliment, setCompliment] = useState<string>('');
   const insets = useSafeAreaInsets();
-  const { height, width } = useWindowDimensions();
 
-  // Stylowanie status bar przy focus/ mount
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.94)).current;
+  const translateAnim = useRef(new Animated.Value(12)).current;
+
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
     StatusBar.setBarStyle('light-content');
@@ -187,26 +136,82 @@ export default function AutorScreen() {
 
   const handleGenerate = useCallback(() => {
     const index = Math.floor(Math.random() * compliments.length);
+
+    fadeAnim.setValue(0);
+    scaleAnim.setValue(0.94);
+    translateAnim.setValue(12);
+
     setCompliment(compliments[index]);
-  }, []);
+
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 6,
+        tension: 70,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateAnim, {
+        toValue: 0,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [fadeAnim, scaleAnim, translateAnim]);
 
   return (
     <View style={styles.screen}>
       <StatusBar backgroundColor="#333333" barStyle="light-content" />
-      <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
-        <Text style={styles.title}>^^</Text>
-        <Text style={styles.intro}>
-          W podziękowaniu za{' '}
-          <Text style={styles.highlight}>CUDOWNĄ</Text> aplikację wyrażam oogromne wyrazy szacunku i podziękowania dla znakomitego autora! Chciałbym mu wyrazić teraz trochę komplementów aby umilić mu dzień.
-        </Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleGenerate}>
-          <Text style={styles.buttonText}>Generuj komplement</Text>
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: insets.bottom + 24 },
+        ]}
+      >
+        <View style={styles.headerBox}>
+          <Text style={styles.title}>Generator komplementów</Text>
+
+          <Text style={styles.intro}>
+            Wygeneruj komplement aby umilić sobie dzień, albo powiedz go komuś, kto tego potrzebuje. {'\n'}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleGenerate}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.buttonText}>Wygeneruj komplement</Text>
         </TouchableOpacity>
 
         {compliment !== '' && (
-          <View style={styles.complimentBox}>
+          <Animated.View
+            style={[
+              styles.complimentBox,
+              {
+                opacity: fadeAnim,
+                transform: [
+                  { scale: scaleAnim },
+                  { translateY: translateAnim },
+                ],
+              },
+            ]}
+          >
+            <Text style={styles.complimentLabel}>Twój komplement:</Text>
             <Text style={styles.complimentText}>{compliment}</Text>
+          </Animated.View>
+        )}
+
+        {compliment === '' && (
+          <View style={styles.emptyBox}>
+            <Text style={styles.emptyText}>
+              Kliknij przycisk i spraw, żeby ktoś się uśmiechnął.
+            </Text>
           </View>
         )}
       </ScrollView>
@@ -217,53 +222,96 @@ export default function AutorScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#0e8569', // ciemnozielone tło spójne z resztą
+    backgroundColor: '#0e8569',
   },
   container: {
-    padding: 24,
-    alignItems: 'center',
+    flexGrow: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+
+  headerBox: {
+    backgroundColor: '#01503d',
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 20,
+    marginBottom: 18,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     color: '#f2d94e',
+    textAlign: 'center',
     marginBottom: 12,
   },
   intro: {
-    fontSize: 18,
+    fontSize: 17,
+    lineHeight: 24,
     color: '#fff',
     textAlign: 'center',
-    marginBottom: 24,
   },
-  highlight: {
-    color: '#f2d94e',
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-  },
+
   button: {
-    backgroundColor: '#01503d',
+    backgroundColor: '#f2d94e',
     borderRadius: 12,
     paddingVertical: 14,
-    paddingHorizontal: 32,
-    marginBottom: 24,
+    paddingHorizontal: 22,
+    alignItems: 'center',
+    marginBottom: 18,
     elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
   },
   buttonText: {
-    color: '#f2d94e',
+    color: '#01503d',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
   },
+
   complimentBox: {
     backgroundColor: '#01503d',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 20,
     width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(242, 217, 78, 0.35)',
+  },
+  complimentLabel: {
+    fontSize: 14,
+    color: '#d8eee8',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: '600',
   },
   complimentText: {
-    fontSize: 16,
+    fontSize: 19,
+    lineHeight: 27,
     color: '#f2d94e',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+
+  emptyBox: {
+    backgroundColor: 'rgba(1, 80, 61, 0.65)',
+    borderRadius: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+  },
+  emptyText: {
+    color: '#d8eee8',
+    fontSize: 16,
+    lineHeight: 22,
     textAlign: 'center',
   },
 });

@@ -12,6 +12,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from '../components/MyText';
+import dailyPlans from '../data/dailyplan.json';
 
 type RootStackParamList = {
   Menu: undefined;
@@ -25,13 +26,11 @@ type RootStackParamList = {
 
 type DailyPlanNavProp = NativeStackNavigationProp<RootStackParamList, 'DailyPlan'>;
 
-const days = Array.from({ length: 11 }, (_, i) => i + 1);
-
-function addDays(date: Date, days: number) {
-  const copy = new Date(date);
-  copy.setDate(copy.getDate() + days);
-  return copy;
-}
+type Plan = {
+  day: number;
+  date: string;
+  weekday: string;
+};
 
 export default function DailyPlanScreen() {
   const navigation = useNavigation<DailyPlanNavProp>();
@@ -39,7 +38,7 @@ export default function DailyPlanScreen() {
   const { height, width } = useWindowDimensions();
   const isPortrait = height >= width;
 
-  const startDate = new Date(2025, 6, 5);
+  const plans = dailyPlans as Plan[];
 
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
@@ -55,19 +54,15 @@ export default function DailyPlanScreen() {
     }, [])
   );
 
-  const renderItem = ({ item }: { item: number }) => {
-    const date = addDays(startDate, item - 1);
-    const formatted = date.toLocaleDateString('pl-PL', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-    });
+  const renderItem = ({ item }: { item: Plan }) => {
     return (
       <TouchableOpacity
         style={styles.tile}
-        onPress={() => navigation.navigate('DailyPlanDetail', { day: item })}
+        onPress={() => navigation.navigate('DailyPlanDetail', { day: item.day })}
       >
-        <Text style={styles.tileText}>{`Dzień ${item}.  –  ${formatted}`}</Text>
+        <Text style={styles.tileText}>
+          {`Dzień ${item.day}.  –  ${item.date.trim()} – ${item.weekday}`}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -75,9 +70,10 @@ export default function DailyPlanScreen() {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#333333" barStyle="light-content" translucent={false} />
+
       <FlatList
-        data={days}
-        keyExtractor={item => item.toString()}
+        data={plans}
+        keyExtractor={item => item.day.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       />

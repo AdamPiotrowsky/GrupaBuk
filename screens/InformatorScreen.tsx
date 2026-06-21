@@ -21,7 +21,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Sharing from 'expo-sharing';
 
 // Wymuś bundlowanie PDF przez Metro
-import PDF_FILE from '../data/Mszalik-2025.pdf';
+//import PDF_FILE from '../data/Mszalik-2025.pdf';
 
 type RootStackParamList = {
   Menu: undefined;
@@ -100,49 +100,49 @@ export default function InformatorScreen() {
     'krem na otarcia (np. bepanthen)',
   ];
 
-  const openPdf = async () => {
-    try {
-      // 1. Pobierz asset i uzyskaj jego URI
-      const asset = Asset.fromModule(PDF_FILE);
-      await asset.downloadAsync();
-      const bundleUri = asset.localUri ?? asset.uri;
+  // const openPdf = async () => {
+  //   try {
+  //     // 1. Pobierz asset i uzyskaj jego URI
+  //     const asset = Asset.fromModule(PDF_FILE);
+  //     await asset.downloadAsync();
+  //     const bundleUri = asset.localUri ?? asset.uri;
 
-      // 2. Skopiuj do DocumentDirectory
-      const destUri = FileSystem.documentDirectory + 'Mszalik-2025.pdf';
-      await FileSystem.copyAsync({ from: bundleUri, to: destUri });
+  //     // 2. Skopiuj do DocumentDirectory
+  //     const destUri = FileSystem.documentDirectory + 'Mszalik-2025.pdf';
+  //     await FileSystem.copyAsync({ from: bundleUri, to: destUri });
 
-      if (Platform.OS === 'android') {
-        // Android: użyj systemowego misownika
-        const contentUri = await FileSystem.getContentUriAsync(destUri);
-        await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-          data: contentUri,
-          flags: 1,
-          type: 'application/pdf',
-        });
-      } else {
-        // iOS: pokaż share-sheet, użytkownik wybierze „Zapisz w Plikach”
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(destUri, {
-            mimeType: 'application/pdf',
-            dialogTitle: 'Pobierz Mszalik 2025',
-          });
-        } else {
-          // fallback: otwórz w przeglądarce
-          await WebBrowser.openBrowserAsync(destUri);
-        }
-      }
-    } catch (e: any) {
-      console.error('Błąd przy otwieraniu PDF:', e);
-      Alert.alert('Błąd', `Nie udało się otworzyć Mszalika: ${e.message}`);
-    }
-  };
+  //     if (Platform.OS === 'android') {
+  //       // Android: użyj systemowego misownika
+  //       const contentUri = await FileSystem.getContentUriAsync(destUri);
+  //       await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+  //         data: contentUri,
+  //         flags: 1,
+  //         type: 'application/pdf',
+  //       });
+  //     } else {
+  //       // iOS: pokaż share-sheet, użytkownik wybierze „Zapisz w Plikach”
+  //       if (await Sharing.isAvailableAsync()) {
+  //         await Sharing.shareAsync(destUri, {
+  //           mimeType: 'application/pdf',
+  //           dialogTitle: 'Pobierz Mszalik 2025',
+  //         });
+  //       } else {
+  //         // fallback: otwórz w przeglądarce
+  //         await WebBrowser.openBrowserAsync(destUri);
+  //       }
+  //     }
+  //   } catch (e: any) {
+  //     console.error('Błąd przy otwieraniu PDF:', e);
+  //     Alert.alert('Błąd', `Nie udało się otworzyć Mszalika: ${e.message}`);
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}>
-        <View style={styles.headerWrapper}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 4 }]}>
+        {/* <View style={styles.headerWrapper}>
           <Text style={styles.header}>Lista rzeczy do wzięcia na pielgrzymkę</Text>
-        </View>
+        </View> */}
 
         <View style={styles.sectionWrapper}>
           <Text style={styles.sectionHeader}>MAŁY BAGAŻ PODRĘCZNY – PLECAK:</Text>
@@ -162,9 +162,17 @@ export default function InformatorScreen() {
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('ImportantPhones')}>
             <Text style={styles.navButtonText}>Ważne telefony</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={openPdf}>
+          {/* <TouchableOpacity style={styles.navButton} onPress={openPdf}>
             <Text style={styles.navButtonText}>Mszalik 2025</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
+          <TouchableOpacity
+  style={styles.navButton}
+  onPress={() => navigation.navigate('Autor')}
+>
+  <Text style={styles.navButtonText}>Generator</Text>
+</TouchableOpacity>
+
         </View>
       </ScrollView>
     </View>
@@ -206,8 +214,9 @@ const styles = StyleSheet.create({
     color: '#f2d94e',
     textAlign: 'center',
     width: '100%',
-    lineHeight: 24,
+    lineHeight: 28,
     marginBottom: 4,
+    marginTop: 4,
   },
   bulletText: {
     fontSize: 16,

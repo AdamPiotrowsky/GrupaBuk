@@ -17,6 +17,8 @@ import ZapisyScreen from './screens/ZapisyScreen';
 import PlaylistScreen from './screens/PlaylistScreen';
 import PlaylistEditScreen from './screens/PlaylistEditScreen';
 import * as NavigationBar from 'expo-navigation-bar';
+import IntentionScreen from './screens/IntentionScreen';
+import IntentionsReaderScreen from './screens/IntentionsReaderScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +46,7 @@ export default function App() {
           <Stack.Screen name="Menu" component={HomeScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Śpiewnik" component={SpiewnikScreen} />
           <Stack.Screen name="SpiewnikDetail" component={SpiewnikDetailScreen} options={{ title: '' }} />
-          <Stack.Screen name="DailyPlan" component={DailyPlanScreen} options={{ title: 'Plan dnia' }} />
+          <Stack.Screen name="DailyPlan" component={DailyPlanScreen} options={{ title: 'Szczegółowy plan dnia' }} />
           <Stack.Screen
             name="DailyPlanDetail"
             component={DailyPlanDetailScreen}
@@ -53,6 +55,8 @@ export default function App() {
           <Stack.Screen name="ImportantPhones" component={ImportantPhonesScreen} options={{ title: 'Ważne telefony' }} />
           <Stack.Screen name="Informator" component={InformatorScreen} options={{ title: 'Co zabrać na pielgrzymkę' }} />
           <Stack.Screen name="Autor" component={AutorScreen} options={{ title: 'Podziękowania' }} />
+          <Stack.Screen name="Intention" component={IntentionScreen} options={{ title: 'Intencje' }} />
+          <Stack.Screen name="IntentionsReader" component={IntentionsReaderScreen} options={{ title: 'Czytelnik intencji' }} />
           <Stack.Screen name="Zapisy" component={ZapisyScreen} />
           <Stack.Screen
             name="PlaylistEdit"

@@ -10,14 +10,12 @@ import {
   StatusBar,
   Linking,
   Platform,
-  Modal,
 } from 'react-native';
-import dailyPlans from '../data/dailyplan.json'; // upewnij się, że ścieżka jest poprawna
+import ImageViewing from 'react-native-image-viewing';
+import dailyPlans from '../data/dailyplan.json';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from '../components/MyText';
-import MyTextInput from '../components/MyTextInput';
-
 
 type Plan = {
   day: number;
@@ -29,17 +27,12 @@ type Plan = {
   mass: { location: string; time: string };
   meal: { location: string; time: string };
   image: string;
-  distance?: string | number; // np. 40 lub "40 km"
-  route?: string;             // URL do trasy
+  distance?: string | number;
+  route?: string;
 };
 
-// Rozmiary ekranu
-const { width: W, height: H } = Dimensions.get('window');
+const { width: W } = Dimensions.get('window');
 
-// Mapowanie etykiet
-const labelMap = { mass: 'Msza', start: 'Start', meal: 'Obiad', finish: 'Meta' } as const;
-
-// Mapowanie obrazków
 const planImages: Record<string, any> = {
   'day1.jpg': require('../assets/plans/day1.jpg'),
   'day2.jpg': require('../assets/plans/day2.jpg'),
@@ -52,18 +45,22 @@ const planImages: Record<string, any> = {
   'day9.jpg': require('../assets/plans/day9.jpg'),
   'day10.jpg': require('../assets/plans/day10.jpg'),
   'day11.jpg': require('../assets/plans/day11.jpg'),
-  // ... jeżeli więcej dni, dodaj kolejne
 };
 
-export default function DailyPlanDetailScreen({ route }: any) {
+const rows = [
+  { key: 'start', label: 'Start' },
+  { key: 'finish', label: 'Meta' },
+  { key: 'mass', label: 'Msza' },
+  { key: 'meal', label: 'Obiad' },
+] as const;
+
+export default function DailyPlanDetailScreen({ route, navigation }: any) {
   const insets = useSafeAreaInsets();
   const { day } = route.params as { day: number };
   const plan = (dailyPlans as Plan[]).find(p => p.day === day);
 
-  // Stan modal pełnoekranowego wyświetlenia obrazka
   const [imageModalVisible, setImageModalVisible] = useState(false);
 
-  // StatusBar
   useEffect(() => {
     StatusBar.setBackgroundColor('#333333');
     StatusBar.setBarStyle('light-content');
@@ -78,6 +75,14 @@ export default function DailyPlanDetailScreen({ route }: any) {
     }, [])
   );
 
+  useEffect(() => {
+    if (plan) {
+      navigation.setOptions({
+        title: `${plan.date.trim()} - ${plan.weekday}`,
+      });
+    }
+  }, [navigation, plan]);
+
   if (!plan) {
     return (
       <View style={styles.center}>
@@ -86,78 +91,110 @@ export default function DailyPlanDetailScreen({ route }: any) {
     );
   }
 
-  // Źródło obrazka
   const imageSource = planImages[plan.image];
 
-  // Przygotowanie tekstu dystansu:
-  let distanceText: string | undefined = undefined;
+  const imageViewerImages = imageSource
+    ? [{ uri: Image.resolveAssetSource(imageSource).uri }]
+    : [];
+
+  let distanceText: string | undefined;
+
   if (plan.distance !== undefined) {
-    if (typeof plan.distance === 'number') {
-      distanceText = `${plan.distance}\u00A0km`;
-    } else if (typeof plan.distance === 'string') {
-      distanceText = plan.distance;
-    }
+    distanceText =
+      typeof plan.distance === 'number'
+        ? `${plan.distance}\u00A0km`
+        : plan.distance;
   }
 
-  // Handler otwarcia linku
   const openRouteLink = () => {
     if (plan.route) {
-      Linking.openURL(plan.route).catch(err => console.error('Błąd otwarcia linku:', err));
+      Linking.openURL(plan.route).catch(err =>
+        console.error('Błąd otwarcia linku:', err)
+      );
     }
   };
 
-  // Wysokość headera: 10% ekranu + SafeArea top
-  const headerHeight = H * 0.12;
-
   return (
     <View style={styles.screen}>
-      {/* Nagłówek: data i intencja, pełna szerokość, ok. 10% wysokości ekranu + SafeArea */}
-      <View style={[
-        styles.headerContainer,
-        { height: headerHeight + insets.top, paddingTop: insets.top },
-      ]}>
-        <Text style={styles.h1}>{plan.date} – {plan.weekday}</Text>
-        <Text style={styles.h2}>{plan.intention}</Text>
-      </View>
+      <ScrollView
+        contentContainerStyle={[
+          styles.wrapper,
+          { paddingBottom: insets.bottom + 18 },
+        ]}
+      >
+        <View style={styles.headerContainer}>
+          <Text style={styles.intentionTitle}>Intencja dnia</Text>
+          <Text style={styles.intentionText}>{plan.intention}</Text>
+        </View>
 
-      {/* ScrollView z pozostałą zawartością */}
-      <ScrollView contentContainerStyle={[styles.wrapper, { paddingBottom: insets.bottom + 16 }]}>
-        {/* Sekcja informacji: Start, Meta, Msza, Posiłek */}
-        {(Object.keys(labelMap) as (keyof typeof labelMap)[]).map(key => {
-          const item = plan[key];
-          return (
-            <View key={key} style={styles.row}>
-              <Text style={styles.label}>{labelMap[key]}</Text>
-              <Text style={styles.time}>{item.time}</Text>
-              <Text style={styles.place}>{item.location}</Text>
+        <View style={styles.infoBox}>
+          {rows.map((row, index) => {
+            const item = plan[row.key];
+            const location = item.location?.trim() || '—';
+            const time = item.time?.trim();
+
+            return (
+              <View
+                key={row.key}
+                style={[
+                  styles.infoRow,
+                  index !== rows.length - 1 && styles.infoRowBorder,
+                ]}
+              >
+                <Text style={styles.infoLabel}>{row.label}</Text>
+
+                <Text style={styles.infoLocation} numberOfLines={2}>
+                  {location}
+                </Text>
+
+                <Text style={styles.infoTime}>
+                  {time || ''}
+                </Text>
+              </View>
+            );
+          })}
+
+          {(distanceText || plan.route) && (
+            <View style={[styles.infoRow, styles.routeRow]}>
+              <Text style={styles.infoLabel}>Trasa</Text>
+
+              <Text style={styles.infoLocation}>
+                {distanceText || 'Mapa'}
+              </Text>
+
+              {plan.route ? (
+                <TouchableOpacity
+                  style={styles.routeMiniButton}
+                  onPress={openRouteLink}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.routeMiniButtonText}>Otwórz</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={styles.infoTime} />
+              )}
             </View>
-          );
-        })}
+          )}
+        </View>
 
-        {/* Wiersz Trasa + dystans */}
-        {(plan.route || distanceText) && (
-          <View style={styles.row}>
-            <Text style={styles.label}>Trasa</Text>
-            <Text style={styles.time}>{distanceText ?? ''}</Text>
-            {/* Można dodać inline button, ale mamy przycisk poniżej */}
-          </View>
-        )}
-
-        {/* Obrazek planu: po kliknięciu otwiera modal z pełnym widokiem */}
         {!!imageSource && (
           <TouchableOpacity
             onPress={() => setImageModalVisible(true)}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
+            style={styles.imageWrapper}
           >
             <Image
               source={imageSource}
               style={styles.thumb}
-              resizeMode="cover"
+              resizeMode="contain"
             />
+
+            <Text style={styles.zoomHint}>
+              Dotknij mapy, aby powiększyć
+            </Text>
           </TouchableOpacity>
         )}
 
-        {/* Pod obrazkiem: przycisk „Link do trasy” z ikoną */}
         {plan.route && (
           <View style={styles.linkButtonContainer}>
             <TouchableOpacity style={styles.routeButton} onPress={openRouteLink}>
@@ -172,76 +209,136 @@ export default function DailyPlanDetailScreen({ route }: any) {
         )}
       </ScrollView>
 
-      {/* Modal wyświetlający obraz na pełnym ekranie */}
-      {imageSource && (
-        <Modal
+      {!!imageSource && (
+        <ImageViewing
+          images={imageViewerImages}
+          imageIndex={0}
           visible={imageModalVisible}
-          transparent
-          animationType="fade"
           onRequestClose={() => setImageModalVisible(false)}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setImageModalVisible(false)}
-          >
-            <Image
-              source={imageSource}
-              style={styles.fullscreenImage}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </Modal>
+          backgroundColor="#000"
+        />
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#0e8569' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#556B2F' },
-  errorText: { color: '#fff', fontSize: 18 },
-
-  // Header: data + intencja
-  headerContainer: {
-    width: '100%',
-    backgroundColor: '#01503d', // ciemne tło
+  screen: {
+    flex: 1,
+    backgroundColor: '#0e8569',
+  },
+  center: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0e8569',
   },
-  h1: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#f2d94e',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  h2: {
-    fontSize: 16,
-    color: '#f2d94e',
-    textAlign: 'center',
-    fontWeight: 'bold',
+  errorText: {
+    color: '#fff',
+    fontSize: 18,
   },
 
   wrapper: {
     padding: 16,
   },
-  row: { flexDirection: 'row', marginBottom: 12, alignItems: 'center' },
-  label: { width: 80, fontSize: 18, fontWeight: '600', color: '#f2d94e',  },
-  time: { width: 82, fontSize: 18, fontWeight: 'bold', color: '#fff', },
-  place: { flex: 1, fontSize: 18, color: '#fff' },
 
-  thumb: {
-    width: W - 32,
-    height: (W - 32) * 0.75,
-    marginTop: 6,
+  headerContainer: {
+    backgroundColor: '#01503d',
     borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 14,
+  },
+  intentionTitle: {
+    fontSize: 14,
+    color: '#d8eee8',
+    textAlign: 'center',
+    marginBottom: 5,
+    fontWeight: '600',
+  },
+  intentionText: {
+    fontSize: 18,
+    color: '#f2d94e',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+
+  infoBox: {
+    backgroundColor: '#01503d',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginBottom: 14,
+  },
+  infoRow: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  infoRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.16)',
+  },
+  routeRow: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.16)',
+  },
+  infoLabel: {
+    width: 62,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#f2d94e',
+  },
+  infoLocation: {
+    flex: 1,
+    fontSize: 16,
+    color: '#fff',
+    lineHeight: 21,
+    paddingRight: 8,
+  },
+  infoTime: {
+    width: 58,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'right',
+  },
+
+  routeMiniButton: {
+    backgroundColor: '#f2d94e',
+    paddingVertical: Platform.OS === 'ios' ? 7 : 5,
+    paddingHorizontal: 9,
+    borderRadius: 7,
+  },
+  routeMiniButtonText: {
+    color: '#01503d',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+
+  imageWrapper: {
+    backgroundColor: '#01503d',
+    borderRadius: 12,
+    padding: 8,
+  },
+  thumb: {
+    width: W - 48,
+    height: (W - 48) * 0.78,
     alignSelf: 'center',
-    backgroundColor: '#333',
+    borderRadius: 8,
+    backgroundColor: '#103f35',
+  },
+  zoomHint: {
+    color: '#d8eee8',
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 7,
   },
 
   linkButtonContainer: {
-    marginTop: 16,
+    marginTop: 14,
     alignItems: 'center',
   },
   routeButton: {
@@ -249,9 +346,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f2d94e',
     paddingVertical: Platform.OS === 'ios' ? 10 : 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: 8,
-    marginTop: 16,
   },
   routeButtonText: {
     color: '#01503d',
@@ -263,18 +359,4 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
   },
-
-  // Modal pełnoekranowego obrazu:
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullscreenImage: {
-    width: W,
-    height: H,
-    // resizeMode "contain" powoduje, że cały obraz jest pokazany w całości,
-    // z zachowaniem proporcji, na tle czarno półprzezroczystym.
-  },
-});
+});         
