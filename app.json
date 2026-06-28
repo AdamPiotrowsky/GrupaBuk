@@ -2,10 +2,9 @@
   "expo": {
     "name": "GrupaBuk",
     "slug": "GrupaBuk",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "orientation": "default",
     "icon": "./assets/logo.png",
-    "entryPoint": "index.ts",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/logo.png",
@@ -23,12 +22,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.konnar55.GrupaBukk"
     },
-    "androidNavigationBar": {
-      "visible": "immersive",
-      "backgroundColor": "#0e8569",
-      "buttonStyle": "light",
-      "behavior": "overlay-swipe"
-    },
     "plugins": [
       [
         "expo-build-properties",
@@ -45,27 +38,22 @@
       [
         "expo-navigation-bar",
         {
-          "visible": "immersive",
-          "backgroundColor": "#0e8569",
-          "buttonStyle": "light",
-          "behavior": "overlay-swipe"
+          "hidden": false,
+          "style": "dark",
+          "enforceContrast": false
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
         "projectId": "c5167f81-69b1-4ce6-a427-f4a5cbbd3cc9"
-      },
-      "expo-navigation-bar": {
-        "visible": "immersive",
-        "backgroundColor": "#0e8569",
-        "buttonStyle": "light",
-        "behavior": "overlay-swipe"
       }
     },
     "owner": "konnar55",
     "ios": {
       "bundleIdentifier": "com.konnar55.GrupaBuk",
+      "buildNumber": "18",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

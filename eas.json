@@ -13,16 +13,17 @@
     },
     "production": {
       "autoIncrement": true,
-
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
-
+      "ios": {
+        "distribution": "store",
+        "image": "macos-sequoia-15.6-xcode-26.0"
+      },
       "distribution": "store"
     }
   },
   "submit": {
-    "production": {
-    }
+    "production": {}
   }
 }

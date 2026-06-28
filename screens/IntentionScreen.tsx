@@ -23,7 +23,7 @@ import { supabase } from '../lib/supabase';
 
 const MIN_LENGTH = 3;
 const MAX_LENGTH = 1000;
-const ADMIN_PASSWORD = 'klerykkuba';
+const ADMIN_PASSWORD = 'adamjestsuper';
 
 const DEVICE_ID_KEY = 'grupa_buk_device_id';
 const LAST_INTENTION_DATE_KEY = 'grupa_buk_last_intention_date';
@@ -104,12 +104,7 @@ export default function IntentionScreen() {
     return '';
   }, [touched, trimmedIntention.length]);
 
-  // TODO
-  // const canSubmit =
-  //   trimmedIntention.length >= MIN_LENGTH &&
-  //   intention.length <= MAX_LENGTH &&
-  //   !isSubmitting &&
-  //   !alreadySubmittedToday;
+ 
 
      const canSubmit =
     trimmedIntention.length >= MIN_LENGTH &&
@@ -287,18 +282,18 @@ export default function IntentionScreen() {
     setPasswordError('');
   };
 
-  const handleAdminPasswordSubmit = () => {
-    if (adminPassword.trim() === ADMIN_PASSWORD) {
-      setPasswordModalVisible(false);
-      setAdminPassword('');
-      setPasswordError('');
+const handleAdminPasswordSubmit = () => {
+  if (adminPassword.trim().toLowerCase() === ADMIN_PASSWORD.toLowerCase()) {
+    setPasswordModalVisible(false);
+    setAdminPassword('');
+    setPasswordError('');
 
-      navigation.navigate('IntentionsReader');
-      return;
-    }
+    navigation.navigate('IntentionsReader');
+    return;
+  }
 
-    setPasswordError('Nieprawidłowe hasło.');
-  };
+  setPasswordError('Nieprawidłowe hasło.');
+};
 
   return (
     <KeyboardAvoidingView
